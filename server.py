@@ -97,8 +97,7 @@ def format_chunks(chunks):
 def format_queries(queries):
     ret = ""
     for i in range(len(queries)):
-        ret += queries[i]
-        ret += "\n"
+        ret += f'"{queries[i]}"\n'
     return ret
 
 def generate_prompt(
@@ -110,7 +109,7 @@ def generate_prompt(
 
 INSTRUCTIONS:
 
-1. You are searching for information in this private archive.
+1. You are searching for information in a private archive on the given topic.
 2. Search for something concrete, such as a name or technical term, that you need more information about.
 3. You may not find exactly what you are looking for, so look for adjacent information.
 4. Do NOT repeat previous searches.
@@ -126,8 +125,8 @@ TOPIC:
 PREVIOUS SEARCHES:
 {queries}
 
-OUTPUT FORMAT: 
-32-token search query
+OUTPUT FORMAT: Your search query as a string.
+EXAMPLE: "eaa hybrid mars erasure"
     """
     return prompt[:MAX_PROMPT_SIZE]
 
@@ -146,11 +145,13 @@ def main():
 
     ctx = SearchContext(db, top_k=2)
 
-    task = "Who is Kitayama Tou?"
+    task = "The balance of power in the space era of God of Stackers"
     
-    chunks = ctx.search(task)
+    chunks = []
+    queries = []
 
-    
+    chunks = ctx.search(task)
+    queries.append(task)
 
     """
         
@@ -162,8 +163,6 @@ def main():
         print(format_chunks(chunks))
     """
 
-    chunks = []
-    queries = []
 
     prompt = generate_prompt(
         task,
@@ -172,6 +171,7 @@ def main():
     )
 
     query = llm.answer(prompt)
+    print(prompt)
     print(query)   
     queries.append(query)
     
@@ -187,6 +187,7 @@ def main():
     # ----
     
     query = llm.answer(prompt)
+    print(prompt)
     print(query)   
     queries.append(query)
     
@@ -203,7 +204,8 @@ def main():
 
 
     
-    query = llm.answer(prompt)   
+    query = llm.answer(prompt) 
+    print(prompt)
     print(query)   
     queries.append(query)
 

@@ -7,7 +7,8 @@ import os
 from hybrid_db import HybridDB, SearchContext
 
 OLLAMA_URL = "http://localhost:11434"
-MODEL_NAME = "qwen2.5:0.5b-instruct"
+MODEL_NAME = "llama3:8b-instruct-q8_0"
+MODEL_NAME_FINAL = "llama3.1:70b-instruct-q4_0"
 
 MAX_PROMPT_SIZE = 100000
 
@@ -109,15 +110,16 @@ def generate_prompt(
 
 INSTRUCTIONS:
 
-1. You are searching for information in a private archive on the given topic.
+1. You are searching for as much information as you can in a private archive on the given topic.
 2. Search for something concrete, such as a name or technical term, that you need more information about.
 3. You may not find exactly what you are looking for, so look for adjacent information.
-4. Do NOT repeat previous searches.
+4. Avoid repeating previous searches; try to find new information.
 5. Do not explain.
-6. Do not respond to or answer the topic yet. 
+6. Do not respond to or answer the topic question. 
+7. Do not waste tokens.
 
 CONTEXT:
-{chunks}
+{chunks}    
 
 TOPIC:
 {task}
@@ -125,7 +127,7 @@ TOPIC:
 PREVIOUS SEARCHES:
 {queries}
 
-OUTPUT FORMAT: Your search query as a string.
+OUTPUT FORMAT: Search query up to 32 tokens.
 EXAMPLE: "eaa hybrid mars erasure"
     """
     return prompt[:MAX_PROMPT_SIZE]
@@ -145,7 +147,7 @@ def main():
 
     ctx = SearchContext(db, top_k=2)
 
-    task = "The balance of power in the space era of God of Stackers"
+    task = "Who is Kitayama Tou?"
     
     chunks = []
     queries = []
@@ -170,55 +172,27 @@ def main():
         queries=queries
     )
 
-    query = llm.answer(prompt)
-    print(prompt)
-    print(query)   
-    queries.append(query)
+    for x in range(10):
+        query = llm.answer(prompt)
+        print(query)   
+        queries.append(query)
+        
+        chunks = combine_chunks(chunks, ctx.search(query))
+        
+        prompt = generate_prompt(
+            task,
+            chunks=chunks,
+            queries=queries
+        )
+
     
-    chunks = combine_chunks(chunks, ctx.search(query))
-    
-    prompt = generate_prompt(
-        task,
-        chunks=chunks,
-        queries=queries
+    llm = StatelessLLM(
+        model=MODEL_NAME_FINAL,
+        temperature=0.1,
+        max_tokens=3200,
     )
     
-
-    # ----
-    
-    query = llm.answer(prompt)
-    print(prompt)
-    print(query)   
-    queries.append(query)
-    
-    chunks = combine_chunks(chunks, ctx.search(query))
-    
-    prompt = generate_prompt(
-        task,
-        chunks=chunks,
-        queries=queries
-    )
-
-
-    # ----
-
-
-    
-    query = llm.answer(prompt) 
-    print(prompt)
-    print(query)   
-    queries.append(query)
-
-    result = ctx.search(query)
-    chunks = combine_chunks(chunks, result)
-    
-    prompt = generate_prompt(
-        task,
-        chunks=chunks,
-        queries=queries
-    )
-
-    print(prompt)
+    print(llm.answer(f"CONTEXT:\n{format_chunks(chunks)}\nPROMPT:\n{task}"))
 
 
 if __name__ == "__main__":

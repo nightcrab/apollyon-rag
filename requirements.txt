@@ -1,0 +1,6 @@
+numpy
+scikit-learn
+sentence-transformers
+joblib
+langchain
+langchain-text-splitters

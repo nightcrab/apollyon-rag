@@ -4,7 +4,7 @@ import json
 from typing import Optional
 import os
 
-from hybrid_db import HybridDB
+from hybrid_db import HybridDB, SearchContext
 
 OLLAMA_URL = "http://localhost:11434"
 MODEL_NAME = "qwen2.5:0.5b-instruct"
@@ -110,7 +110,7 @@ def generate_prompt(
 
 INSTRUCTIONS:
 
-1. You are searching for information.
+1. You are searching for information in this private archive.
 2. Search for something concrete, such as a name or technical term, that you need more information about.
 3. You may not find exactly what you are looking for, so look for adjacent information.
 4. Do NOT repeat previous searches.
@@ -144,22 +144,38 @@ def main():
 
     db = load_or_create_db("./data/corpus.txt")
 
+    ctx = SearchContext(db, top_k=2)
+
     task = "Who is Kitayama Tou?"
+    
+    chunks = ctx.search(task)
+
+    
+
+    """
+        
+        print(len(chunks))
+        chunks = combine_chunks(chunks, ctx.search(task))
+        print(len(chunks))
+        chunks = combine_chunks(chunks, ctx.search(task))
+        print(len(chunks))
+        print(format_chunks(chunks))
+    """
 
     chunks = []
     queries = []
 
     prompt = generate_prompt(
         task,
-        chunks=[],
-        queries=[]
+        chunks=chunks,
+        queries=queries
     )
 
     query = llm.answer(prompt)
     print(query)   
     queries.append(query)
     
-    chunks = combine_chunks(chunks, db.search(query))
+    chunks = combine_chunks(chunks, ctx.search(query))
     
     prompt = generate_prompt(
         task,
@@ -174,7 +190,7 @@ def main():
     print(query)   
     queries.append(query)
     
-    chunks = combine_chunks(chunks, db.search(query))
+    chunks = combine_chunks(chunks, ctx.search(query))
     
     prompt = generate_prompt(
         task,
@@ -191,7 +207,7 @@ def main():
     print(query)   
     queries.append(query)
 
-    result = db.search(query)
+    result = ctx.search(query)
     chunks = combine_chunks(chunks, result)
     
     prompt = generate_prompt(

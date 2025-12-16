@@ -129,7 +129,7 @@ class HybridDB:
         for idx in idxs:
             if idx == previous_idx+1:
                 # remove overlap
-                merged[-1] += " " + " ".join(self.chunks[idx].split(" ")[75:])
+                merged[-1] += " " + " ".join(self.chunks[idx].split(" ")[0:])
             else:
                 merged.append(self.chunks[idx])
             previous_idx = idx

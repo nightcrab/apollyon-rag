@@ -142,13 +142,9 @@ def main():
         max_tokens=32,
     )
 
-    db = load_or_create_db("./corpus.txt")
+    db = load_or_create_db("./data/corpus.txt")
 
     task = "Who is Kitayama Tou?"
-
-    #print(db.search("Erasure cascade planetary hybrids E-field Stackers academy Souten Ayano Hasegawa New Tokyo special zones artifacts historical weapons lore wiki timeline Mars colonies governance hybridization ethics military votes KBM strike CRA interplanetary archives"))
-
-    #return
 
     chunks = []
     queries = []

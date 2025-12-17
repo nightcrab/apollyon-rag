@@ -11,15 +11,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 
+from llm import StatelessLLM
+
 class Chunker:
     """Chunker using RecursiveCharacterTextSplitter"""
     
     def __init__(
         self,
         chunk_size: int = 300,
-        chunk_overlap: int = 100,
+        chunk_overlap: int = 150,
         separators: Optional[List[str]] = None,
-        keep_separator: bool = True
+        keep_separator: bool = True,
+        model_path: str = "granite4:1b"
     ):
         if separators is None:
             separators = ["\n\n", "\n", ". ", "? ", "! ", " ", ""]
@@ -31,11 +34,27 @@ class Chunker:
             keep_separator=keep_separator,
             length_function=lambda text: len(text.split())  # Count by words
         )
+
+        self.model_path = model_path
     
     def chunk_text(self, text: str) -> List[str]:
         """Split text into chunks"""
         documents = self.text_splitter.create_documents([text])
         return [doc.page_content for doc in documents]
+
+    def create_titles(self, chunks):
+        print("Creating chunk titles...")
+        titles = []
+        llm = StatelessLLM(
+            self.model_path,
+            max_tokens=32
+        )
+        for chunk in chunks[::2]:
+            title = llm.answer(f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}")
+            titles.append(title)
+            print(title)
+        print("Done creating titles.")
+        return titles
     
     def chunk_documents(self, documents: List[Document]) -> List[Document]:
         """Split documents into chunks"""
@@ -45,7 +64,6 @@ class Chunker:
 class HybridDB:
     """
     Keyword + Vector database created from local text file.
-    Uses LangChain for document loading and splitting.
     """
     def __init__(
         self,
@@ -70,15 +88,29 @@ class HybridDB:
         chunked_docs = self.chunker.chunk_documents(documents)
         self.chunks = [doc.page_content for doc in chunked_docs]
         self.documents = chunked_docs  # Keep Document objects if needed
+        self.titles = self.chunker.create_titles(self.chunks)
+
+        # background corpus for tf-idf
+        import nltk
+        from nltk.corpus import brown
+        from nltk.corpus import gutenberg
+
+        nltk.download('brown')
+        nltk.download('gutenberg')
+
+        background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
+        background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
         
         # Keyword side
         self.vectorizer = TfidfVectorizer(
             stop_words="english",
             max_features=5000,
             ngram_range=(1,3),
-            lowercase=False
+            sublinear_tf=True,
         )
-        self.keyword_matrix = self.vectorizer.fit_transform(self.chunks)
+        tfidf_matrix = self.vectorizer.fit_transform(self.chunks + background_docs)
+
+        self.keyword_matrix = tfidf_matrix[:len(self.chunks)]
         
         # Embedding side
         self.embedder_name = embedder_name
@@ -132,7 +164,7 @@ class HybridDB:
         for i in range(len(kw_scores)):
             rrf_scores[i] = 1/(k + kw_ranks[i]) + 1/(k + sem_ranks[i])
         
-        # Apply filtering
+        # Apply convolution filter
         scores = self._1d_filter(rrf_scores)
         
         # Exclude specified indices
@@ -169,17 +201,6 @@ class HybridDB:
         
         # STEP 2: Get TF-IDF vectors for direct matches
         direct_tfidf = self.keyword_matrix[direct_indices]
-        print(direct_matches)
-        feature_names = self.vectorizer.get_feature_names_out()
-        # Average TF-IDF across direct matches
-        avg_tfidf = np.array(direct_tfidf.mean(axis=0)).flatten()
-
-        # Get top 10 keywords
-        top_n = 10
-        top_indices = avg_tfidf.argsort()[::-1][:top_n]
-        top_keywords = [(feature_names[i], avg_tfidf[i]) for i in top_indices]
-
-        print("Top TF-IDF keywords:", top_keywords)
         
         # Average TF-IDF vectors of direct matches to get combined keyword profile
         combined_vector = direct_tfidf.mean(axis=0)
@@ -257,6 +278,7 @@ class HybridDB:
                 "checksum": self.checksum,
                 "chunks": self.chunks,
                 "documents": self.documents,
+                "titles": self.titles,
                 "vectorizer": self.vectorizer,
                 "keyword_matrix": self.keyword_matrix,
                 "embeddings": self.embeddings,
@@ -274,6 +296,7 @@ class HybridDB:
         obj.checksum = data["checksum"]
         obj.chunks = data["chunks"]
         obj.documents = data.get("documents", [])
+        obj.titles = data.get("titles", [])
         obj.vectorizer = data["vectorizer"]
         obj.keyword_matrix = data["keyword_matrix"]
         obj.embeddings = data["embeddings"]
@@ -313,24 +336,7 @@ class SearchContext:
         
         return total_chunks
     
-    def search_documents(self, query: str) -> List[Document]:
-        """Search and return Documents"""
-        chunks = self.search(query)
-        
-        # Convert back to Document objects
-        documents = []
-        for i, chunk in enumerate(chunks):
-            doc = Document(
-                page_content=chunk,
-                metadata={
-                    "search_index": i,
-                    "history_position": len(self.history) - len(chunks) + i
-                }
-            )
-            documents.append(doc)
-        
-        return documents
-    
+
     def reset(self):
         """Reset search history"""
         self.history = []

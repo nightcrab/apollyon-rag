@@ -1,5 +1,5 @@
 
-from hybrid_db import HybridDB, SearchContext
+from hdb import HybridDB, SearchContext
 import os
 
 def load_or_create_db(path):

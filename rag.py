@@ -149,7 +149,7 @@ class RAGInstance:
 
         new_chunks = self.ctx.search(task)
 
-        self.chunks.extend()
+        self.chunks.extend(new_chunks)
         self.queries.append(task)
 
         for x in range(iterations):

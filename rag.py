@@ -108,7 +108,7 @@ class RAGInstance:
     """
     def __init__(
         self, 
-        path: str = "./data/corpus.txt", 
+        path: str = "./example_data/corpus.txt", 
         verbose: bool = False,
         max_titles: int = 128
     ):

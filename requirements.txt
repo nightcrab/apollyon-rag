@@ -4,3 +4,5 @@ sentence-transformers
 joblib
 langchain
 langchain-text-splitters
+langchain_community
+nltk

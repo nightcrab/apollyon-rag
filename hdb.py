@@ -11,6 +11,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.sparse import csr_matrix
 
+import nltk
+from nltk.corpus import brown
+from nltk.corpus import gutenberg
+
 from llm import StatelessLLM
 
 class Chunker:
@@ -49,7 +53,7 @@ class Chunker:
             self.model_path,
             max_tokens=32
         )
-        for chunk in chunks[::2]:
+        for chunk in chunks[::20]:
             title = llm.answer(f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}")
             titles.append(title)
             print(title)
@@ -91,9 +95,6 @@ class HybridDB:
         self.titles = self.chunker.create_titles(self.chunks)
 
         # background corpus for tf-idf
-        import nltk
-        from nltk.corpus import brown
-        from nltk.corpus import gutenberg
 
         nltk.download('brown')
         nltk.download('gutenberg')

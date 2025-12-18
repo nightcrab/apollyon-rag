@@ -1,5 +1,9 @@
 <script>
 	import { onMount, tick } from "svelte";
+	import { marked } from 'marked';
+	import { v4 as uuid } from 'uuid';
+
+	import DOMPurify from 'dompurify';
 
 	let prompt = "";
 	let loading = false;
@@ -8,6 +12,8 @@
 
 	let uploading = false;
 
+	let session_id;
+
 	let fileInput;
 
 	let displayedError;
@@ -15,6 +21,19 @@
 	let messages = [
 		// { role: "user" | "assistant", content: "" }
 	];
+
+	onMount(()=>{
+		session_id = localStorage.getItem("session_id");
+
+		if (!session_id) {
+			session_id = uuid();
+			localStorage.setItem("session_id", session_id);
+		}
+	})
+
+	function renderMarkdown(content) {
+		return DOMPurify.sanitize(marked.parse(content));
+	}
 
 	async function handleFileChange(event) {
 
@@ -43,7 +62,7 @@
 			throw new Error('No file to upload');
 		}
 		
-		formData.append('session_id', 'default_session')
+		formData.append('session_id', session_id)
 
 		const response = await fetch(
 			`/api/upload`,
@@ -93,7 +112,7 @@
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				prompt: userMessage,
-				session_id: "default_session"
+				session_id: session_id
 			})
 		});
 
@@ -148,8 +167,8 @@
 				{#if msg.loading}
 					<div class="bubble typing">Thinking…</div>
 				{:else}
-					<div class="bubble">
-						{msg.content}
+					<div class="bubble markdown">
+						{@html renderMarkdown(msg.content)}
 					</div>
 				{/if}
 			</div>
@@ -287,8 +306,11 @@
 		border-radius: 1em;
 		line-height: 1.6;
 		font-size: 0.95rem;
-		white-space: pre-wrap;
 		word-break: break-word;
+	}
+
+	:global(.markdown p) {
+		margin: 0px;
 	}
 
 	.row.user .bubble {

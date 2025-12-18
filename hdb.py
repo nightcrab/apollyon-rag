@@ -176,10 +176,9 @@ class HybridDB:
             self.keyword_matrix = tfidf_matrix[:len(new_chunks)]
         else:
             new_tfidf = self.vectorizer.transform(new_chunks)
-            # Convert to dense temporarily for vstack, then back if needed
             old_dense = self.keyword_matrix.toarray() if hasattr(self.keyword_matrix, "toarray") else self.keyword_matrix
             combined = np.vstack((old_dense, new_tfidf.toarray()))
-            self.keyword_matrix = combined  # Keep as dense array for simplicity
+            self.keyword_matrix = combined
 
         if not self.save_path:
             self.save_path = f"{path}.db"
@@ -187,15 +186,18 @@ class HybridDB:
         print("Saving DB")
         self.save(self.save_path)
 
-    def add_file(self, path: str):
+
+    def add_file(self, path: str) -> List[str]:
         """Add a new document file and process it incrementally."""
         try:
             print(f"Processing document {path}")
+
             self._process_document(path)
 
             print(f"Successfully added {path}")
         except Exception as e:
             print(f"Error adding {path}: {e}")
+
 
     def _1d_filter(self, scores, side_weight=0.3, center_weight=0.4):
         """Apply 1D context filter to scores"""
@@ -246,20 +248,24 @@ class HybridDB:
         scores = self._1d_filter(rrf_scores)
         
         # Exclude specified indices
+        excluded_idxs = set(excluded_idxs)
+
         for idx in excluded_idxs:
             if 0 <= idx < len(scores):
                 scores[idx] = -np.inf
         
         # Get top-k indices
         idxs = scores.argsort()[::-1][:top_k]
+
+        idxs = list(set([idx for idx in idxs if idx not in excluded_idxs]))
         
         return [self.chunks[x] for x in idxs], idxs
 
     def contextual_search(
         self,
         query: str,
-        top_k_direct: int = 2,
-        top_k: int = 5,
+        top_k_direct: int = 1,
+        top_k: int = 2,
         similarity_threshold: float = 0.1,
         excluded_idxs: list = None
     ):
@@ -269,40 +275,44 @@ class HybridDB:
         if excluded_idxs is None:
             excluded_idxs = []
         
-        # STEP 1: Get direct matches
+        # 2-step search using tf-idf
+
         direct_matches, direct_indices = self.search(
             query, 
             top_k=top_k_direct,
             excluded_idxs=excluded_idxs
         )
         
-        # STEP 2: Get TF-IDF vectors for direct matches
         direct_tfidf = self.keyword_matrix[direct_indices]
         
-        # Average TF-IDF vectors
+        # TF-IDF vectors
         combined_vector = direct_tfidf.mean(axis=0)
         combined_vector = csr_matrix(combined_vector)
         
-        # STEP 3: Similarity to all chunks
         similarities = cosine_similarity(combined_vector, self.keyword_matrix)[0]
         
-        # Apply context filter
+        # smoothing filter
         similarities = self._1d_filter(similarities)
         
-        # STEP 4: Filter and rank
-        all_selected = set([*direct_indices, *excluded_idxs])
-        
-        for i in range(len(similarities)):
-            if i in all_selected:
-                similarities[i] = -1
-            elif similarities[i] < similarity_threshold:
-                similarities[i] = -1
+        excluded_idxs = set(list(direct_indices) + excluded_idxs)
         
         top_related_count = max(0, top_k - len(direct_indices))
+
+        for idx in range(len(similarities)):
+            if idx < similarity_threshold:
+                similarities[idx] = -1
+            if idx in excluded_idxs:
+                similarities[idx] = -1
+
         related_indices = similarities.argsort()[::-1][:top_related_count]
-        related_indices = [idx for idx in related_indices if similarities[idx] > similarity_threshold]
+
+        related_indices = [
+            idx for idx in related_indices if 
+            similarities[idx] > similarity_threshold and
+            idx not in excluded_idxs
+        ]
         
-        all_indices = list(direct_indices) + list(related_indices)
+        all_indices = sorted(set(list(direct_indices) + list(related_indices)))
         
         return self._merge_chunks(all_indices), all_indices
 
@@ -381,7 +391,7 @@ class SearchContext:
     def __init__(
         self,
         database: HybridDB,
-        top_k: int = 5,
+        top_k: int = 2,
     ):
         self.database = database
         self.history = []
@@ -396,7 +406,7 @@ class SearchContext:
         )
 
         self.history.extend(idxs)
-        
+        print(self.history)
         return chunks
     
     def reset(self):

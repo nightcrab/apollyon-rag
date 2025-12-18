@@ -27,13 +27,17 @@ class StatefulLLM:
         self.history = []
         self.history_size = 0
         self.max_history_size = max_history_size
-        self.rag = rag.RAGInstance()
+        self.rag = rag.RAGInstance(verbose=True)
 
     def add_file(self, path):
         self.rag.add_file(path)
 
     def build_full_prompt(self) -> str:
         messages = []
+
+        if self.rag.contains_documents():
+            titles = '\n'.join(self.rag.db.titles)
+            messages.append(f"document titles: {titles}")
 
         for role, content in self.history:
             messages.append(f"{role}: {content}")
@@ -46,13 +50,13 @@ class StatefulLLM:
             self.history = self.history[1:]
 
     async def stream_completion(self, prompt: str):
-        self.history.append(("user", prompt))
 
         if self.rag.contains_documents():
-            retrievals = self.rag.retrieve(prompt, iterations=2)
-            self.history.append(("context", retrievals))
+            retrievals = self.rag.retrieve(prompt, iterations=3)
+            self.history.append(("documents retrieved", retrievals))
             self.history_size += utf8len(retrievals)
 
+        self.history.append(("user", prompt))
         self.history_size += utf8len(prompt)
 
         full_prompt = self.build_full_prompt()

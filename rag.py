@@ -56,14 +56,13 @@ def generate_prompt(
 
 INSTRUCTIONS:
 
-1. You are searching for as much information as you can in a corpus in relation to a final topic.
+1. You are searching for as much information as you can about a given topic.
 2. Search for something concrete, such as a name or technical term, that you need more information about.
 3. You may not find exactly what you are looking for, so look for adjacent information.
-4. Avoid repeating previous searches; try to find new information.
-5. Do not explain.
-6. Do not respond to or answer the topic question.
-7. Do not waste tokens. 
-8. Do not respond with anything except for the next search query.
+4. Do not explain.
+5. Do not respond to or answer the topic question.
+6. Do not waste tokens. 
+7. Do not respond with anything except for the next search query.
 
 
 TOPIC:
@@ -86,16 +85,13 @@ Here are the documents you have read so far.
 SEARCH RESULTS:
 {chunks}    
 
-SEARCH FORMAT: Text query up to 32 tokens.
+SEARCH FORMAT: Text query up to 128 tokens.
 
 Make the next thing you write the search query. Do NOT write anything such as the following:
 "I'm ready to help you [...]"
 "Based on the provided [...]"
 "Here is my search query [...]"
 You will jam the system and ruin the search machine. Don't say anything!
-
-Do not just search the same things you already searched and do not just search the topic directly!
-Investigate topics mentioned in the documents you already have found.
 
 YOUR INPUT:
     """
@@ -117,13 +113,13 @@ class RAGInstance:
         self.llm = StatelessLLM(
             model=MODEL_NAME,
             temperature=0.1,
-            max_tokens=64, # more generous than the 32 stated
+            max_tokens=256, # more generous than the 128 stated
         )
 
         self.db = load_or_create_db(path)
         self.max_titles = max_titles
 
-        self.ctx = SearchContext(self.db, top_k=2)
+        self.ctx = SearchContext(self.db)
         self.verbose = verbose
 
         self.chunks = []
@@ -138,7 +134,7 @@ class RAGInstance:
     ):
         if len(self.db.chunks) == 0:
             self.db = load_or_create_db(path)
-            self.ctx = SearchContext(self.db, top_k=2)
+            self.ctx = SearchContext(self.db)
         else:
             self.db.add_file(path)
 
@@ -181,9 +177,11 @@ class RAGInstance:
             retrievals = self.ctx.search(query)
             new_chunks.extend(retrievals)
             
-            self.chunks = combine_chunks(self.chunks, retrievals)
+            self.chunks.extend(retrievals)
 
         if self.verbose:
             print(f"{len(new_chunks)} chunks retrieved")
+
+        print(self.ctx.history)
 
         return format_chunks(new_chunks)

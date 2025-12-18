@@ -8,8 +8,8 @@ import random
 from hdb import HybridDB, SearchContext
 from llm import StatelessLLM
 
-MODEL_NAME = "ministral-3:14b"
-MODEL_NAME_FINAL = "ministral-3:14b"
+MODEL_NAME = "granite4:1b"
+MODEL_NAME_FINAL = "granite4:1b"
 
 MAX_PROMPT_SIZE = 100000
 
@@ -110,11 +110,10 @@ class RAGInstance:
     """
     def __init__(
         self, 
-        path: str = "./example_data/corpus.txt", 
+        path: str = None, 
         verbose: bool = False,
         max_titles: int = 128
     ):
-
         self.llm = StatelessLLM(
             model=MODEL_NAME,
             temperature=0.1,
@@ -130,6 +129,15 @@ class RAGInstance:
         self.chunks = []
         self.queries = []
 
+    def contains_documents(self):
+        return len(self.db.chunks) > 0
+
+    def add_file(
+        self,
+        path: str
+    ):
+        self.db.add_file(path)
+
     def retrieve(
         self,
         task: str,
@@ -139,10 +147,10 @@ class RAGInstance:
         Make retrievals using iterative lookup.
         """
 
-        self.chunks.extend(self.ctx.search(task))
-        self.queries.append(task)
+        new_chunks = self.ctx.search(task)
 
-        new_chunks = []
+        self.chunks.extend()
+        self.queries.append(task)
 
         for x in range(iterations):
 

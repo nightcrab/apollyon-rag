@@ -28,13 +28,19 @@ class ChatRequest(BaseModel):
     prompt: str
     session_id: str = "default_session"
 
+def get_session(session_id):
+    
+    if session_id not in sessions:
+        sessions[session_id] = StatefulLLM()
+
+    llm = sessions[session_id]
+
+    return llm
+
 @app.post("/api/chat")
 async def chat(req: ChatRequest):
 
-    if req.session_id not in sessions:
-        sessions[req.session_id] = StatefulLLM()
-
-    llm = sessions[req.session_id]
+    llm = get_session(req.session_id)
 
     return StreamingResponse(
         #stream_string("hello how are you"),
@@ -48,14 +54,18 @@ async def upload_file(
     session_id: str = Form("default_session")
 ):
     try:
+        outcome, file_path = save_file(file)
+
         response = JSONResponse(
             status_code=200,
-            content=save_file(file)
+            content=outcome
         )
-        print(response)
+        
+        llm = get_session(req.session_id)
+        llm.add_file(outcome.file_path)
+            
         return response
     except Exception as e:
-        print(e)
         return JSONResponse(
             status_code=500,
             content={"message": f"Error uploading file: {str(e)}"}

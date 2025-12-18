@@ -1,21 +1,5 @@
-import numpy as np
 from typing import List, Optional, Dict, Any
-import pathlib
-import hashlib
-import joblib
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import TextLoader
-from langchain_core.documents import Document
-from sentence_transformers import SentenceTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from scipy.sparse import csr_matrix
 
-import nltk
-from nltk.corpus import brown
-from nltk.corpus import gutenberg
-
-from llm import StatelessLLM
 
 class Chunker:
     """Chunker using RecursiveCharacterTextSplitter"""
@@ -30,7 +14,10 @@ class Chunker:
     ):
         if separators is None:
             separators = ["\n\n", "\n", ". ", "? ", "! ", " ", ""]
-            
+        
+        # Lazy imports inside __init__
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
@@ -47,6 +34,8 @@ class Chunker:
         return [doc.page_content for doc in documents]
 
     def create_titles(self, chunks):
+        from llm import StatelessLLM
+        
         print("Creating chunk titles...")
         titles = []
         llm = StatelessLLM(
@@ -60,7 +49,7 @@ class Chunker:
         print("Done creating titles.")
         return titles
     
-    def chunk_documents(self, documents: List[Document]) -> List[Document]:
+    def chunk_documents(self, documents: List[Any]) -> List[Any]:
         """Split documents into chunks"""
         return self.text_splitter.split_documents(documents)
 
@@ -82,38 +71,66 @@ class HybridDB:
         self.embeddings = []
         self.checksums = []
         self.keyword_matrix = None  # Will be initialized on first add
-
-        # Load background corpus once
-        nltk.download('brown', quiet=True)
-        nltk.download('gutenberg', quiet=True)
-        self.background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
-        self.background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
-
-        # Initialize vectorizer 
-        self.vectorizer = TfidfVectorizer(
-            stop_words="english",
-            max_features=5000,
-            ngram_range=(1, 3),
-            sublinear_tf=True,
-        )
-
-        # Initialize embedder
-        self.embedder_name = embedder_name
-        self.embedder = SentenceTransformer(self.embedder_name)
-
-        # Initialize chunker
-        self.chunker = Chunker()
-
         self.save_path = None
         
         if path:
             self.save_path = path + ".db"
             self._process_document(path)
 
+        # Chunker and embedder are initialized lazily when needed
+        self.embedder_name = embedder_name
+        self._embedder = None
+        self._chunker = None
+        self._vectorizer = None
+
+    @property
+    def chunker(self):
+        if self._chunker is None:
+            self._chunker = Chunker()
+        return self._chunker
+
+    @property
+    def embedder(self):
+        if self._embedder is None:
+            from sentence_transformers import SentenceTransformer
+            self._embedder = SentenceTransformer(self.embedder_name)
+        return self._embedder
+
+    @property
+    def vectorizer(self):
+        if self._vectorizer is None:
+            from sklearn.feature_extraction.text import TfidfVectorizer
+            self._vectorizer = TfidfVectorizer(
+                stop_words="english",
+                max_features=5000,
+                ngram_range=(1, 3),
+                sublinear_tf=True,
+            )
+        return self._vectorizer
+
+    def _load_background_corpus(self):
+        import nltk
+        from nltk.corpus import brown, gutenberg
+
+        nltk.download('brown', quiet=True)
+        nltk.download('gutenberg', quiet=True)
+        background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
+        background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
+        return background_docs
 
     def _process_document(self, path: str):
+        import pathlib
+        import hashlib
+        from langchain_community.document_loaders import TextLoader
+        from langchain_core.documents import Document
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+        from scipy.sparse import csr_matrix
+
         if not path or not isinstance(path, str):
             raise ValueError("Invalid path provided.")
+
+        pathlib.Path(path).resolve()  # Validate path exists indirectly
 
         # Load text
         loader = TextLoader(path, encoding="utf-8")
@@ -140,18 +157,24 @@ class HybridDB:
             normalize_embeddings=True,
             show_progress_bar=True,
         )
-        if self.embeddings:
+        if len(self.embeddings):
             self.embeddings = np.vstack((self.embeddings, new_embeddings))
         else:
             self.embeddings = new_embeddings
 
-        all_for_tfidf = new_chunks + self.background_docs
+        # TF-IDF: fit on background + new chunks, or transform new only
+        background_docs = self._load_background_corpus()
+        all_for_tfidf = new_chunks + background_docs
+
         if self.keyword_matrix is None:
             tfidf_matrix = self.vectorizer.fit_transform(all_for_tfidf)
             self.keyword_matrix = tfidf_matrix[:len(new_chunks)]
         else:
             new_tfidf = self.vectorizer.transform(new_chunks)
-            self.keyword_matrix = np.vstack((self.keyword_matrix.toarray(), new_tfidf.toarray()))
+            # Convert to dense temporarily for vstack, then back if needed
+            old_dense = self.keyword_matrix.toarray() if hasattr(self.keyword_matrix, "toarray") else self.keyword_matrix
+            combined = np.vstack((old_dense, new_tfidf.toarray()))
+            self.keyword_matrix = combined  # Keep as dense array for simplicity
 
     def add_file(self, path: str):
         """Add a new document file and process it incrementally."""
@@ -165,9 +188,9 @@ class HybridDB:
         except Exception as e:
             print(f"Error adding {path}: {e}")
 
-
     def _1d_filter(self, scores, side_weight=0.3, center_weight=0.4):
         """Apply 1D context filter to scores"""
+        import numpy as np
         context_scores = scores.copy()
         for i in range(len(scores)):
             acc = center_weight * scores[i]
@@ -186,13 +209,16 @@ class HybridDB:
         excluded_idxs: list = None
     ):
         """Search using RRF hybrid approach"""
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+
         if excluded_idxs is None:
             excluded_idxs = []
         
         # Get keyword scores and ranks
         q_kw = self.vectorizer.transform([query])
         kw_scores = cosine_similarity(q_kw, self.keyword_matrix)[0]
-        kw_ranks = (-kw_scores).argsort().argsort() + 1  # Convert to ranks (1-based)
+        kw_ranks = (-kw_scores).argsort().argsort() + 1
         
         # Get semantic scores and ranks
         q_emb = self.embedder.encode(
@@ -200,7 +226,7 @@ class HybridDB:
             normalize_embeddings=True,
         )[0]
         sem_scores = self.embeddings @ q_emb
-        sem_ranks = (-sem_scores).argsort().argsort() + 1  # Convert to ranks (1-based)
+        sem_ranks = (-sem_scores).argsort().argsort() + 1
         
         # RRF
         rrf_scores = np.zeros_like(kw_scores)
@@ -218,7 +244,6 @@ class HybridDB:
         # Get top-k indices
         idxs = scores.argsort()[::-1][:top_k]
         
-        # don't merge chunks
         return [self.chunks[x] for x in idxs], idxs
 
     def contextual_search(
@@ -229,9 +254,9 @@ class HybridDB:
         similarity_threshold: float = 0.1,
         excluded_idxs: list = None
     ):
-        """
-        Find related chunks using TF-IDF keyword similarity
-        """
+        from sklearn.metrics.pairwise import cosine_similarity
+        from scipy.sparse import csr_matrix
+
         if excluded_idxs is None:
             excluded_idxs = []
         
@@ -245,19 +270,17 @@ class HybridDB:
         # STEP 2: Get TF-IDF vectors for direct matches
         direct_tfidf = self.keyword_matrix[direct_indices]
         
-        # Average TF-IDF vectors of direct matches to get combined keyword profile
+        # Average TF-IDF vectors
         combined_vector = direct_tfidf.mean(axis=0)
         combined_vector = csr_matrix(combined_vector)
         
-        # STEP 3: Find chunks similar to this keyword profile
-        # Compute cosine similarity between combined vector and all chunks
+        # STEP 3: Similarity to all chunks
         similarities = cosine_similarity(combined_vector, self.keyword_matrix)[0]
         
         # Apply context filter
         similarities = self._1d_filter(similarities)
         
         # STEP 4: Filter and rank
-        # Remove already selected indices
         all_selected = set([*direct_indices, *excluded_idxs])
         
         for i in range(len(similarities)):
@@ -266,17 +289,12 @@ class HybridDB:
             elif similarities[i] < similarity_threshold:
                 similarities[i] = -1
         
-        # Get top related indices
         top_related_count = max(0, top_k - len(direct_indices))
         related_indices = similarities.argsort()[::-1][:top_related_count]
-        
-        # Filter out invalid indices
         related_indices = [idx for idx in related_indices if similarities[idx] > similarity_threshold]
         
-        # Combine results
         all_indices = list(direct_indices) + list(related_indices)
         
-        # Merge consecutive chunks
         return self._merge_chunks(all_indices), all_indices
 
     def _merge_chunks(self, indices: List[int]) -> List[str]:
@@ -286,39 +304,35 @@ class HybridDB:
 
         merged = []
         previous_idx = -2
-        current_chunk = ""
 
         for idx in sorted(indices):
             chunk = self.chunks[idx]
             
             if previous_idx == -2:
-                # First chunk, just add it
                 merged.append(chunk)
             elif idx == previous_idx + 1:
                 prev_chunk = merged[-1]
-                # Find overlap size by comparing suffix of previous chunk with prefix of current chunk
                 overlap_size = 0
                 max_overlap = min(len(prev_chunk), len(chunk))
-                # simple heuristic: check longest suffix-prefix match
                 for i in range(1, max_overlap + 1):
                     if prev_chunk[-i:] == chunk[:i]:
                         overlap_size = i
-                # Merge without repeating overlap
+                        break  # Use longest match found
                 merged[-1] += " " + chunk[overlap_size:]
             else:
-                # Non-consecutive chunk, just append
                 merged.append(chunk)
 
             previous_idx = idx
 
         return merged
 
-
     def save(self, path: str):
         """Save database to disk"""
+        import joblib
+
         joblib.dump(
             {
-                "checksum": self.checksum,
+                "checksums": self.checksums,  # Fixed: was self.checksum (singular)
                 "chunks": self.chunks,
                 "documents": self.documents,
                 "titles": self.titles,
@@ -333,19 +347,22 @@ class HybridDB:
     @classmethod
     def load(cls, path: str):
         """Load database from disk"""
+        import joblib
+        from sentence_transformers import SentenceTransformer
+
         data = joblib.load(path)
         
         obj = cls.__new__(cls)
-        obj.checksum = data["checksum"]
+        obj.checksums = data.get("checksums", data.get("checksum", []))  # Backward compat
         obj.chunks = data["chunks"]
         obj.documents = data.get("documents", [])
         obj.titles = data.get("titles", [])
-        obj.vectorizer = data["vectorizer"]
+        obj._vectorizer = data["vectorizer"]
         obj.keyword_matrix = data["keyword_matrix"]
         obj.embeddings = data["embeddings"]
         obj.embedder_name = data["embedder_name"]
-        obj.embedder = SentenceTransformer(obj.embedder_name)
-        obj.chunker = Chunker()  # Default chunker
+        obj._embedder = SentenceTransformer(obj.embedder_name)
+        obj._chunker = Chunker()
         
         return obj
 
@@ -364,9 +381,6 @@ class SearchContext:
     
     def search(self, query: str) -> List[str]:
         """Search with memory state"""
-        
-        total_chunks = []
-
         chunks, idxs = self.database.contextual_search(
             query,
             top_k=self.top_k,
@@ -374,12 +388,9 @@ class SearchContext:
         )
 
         self.history.extend(idxs)
-
-        total_chunks.extend(chunks)
         
-        return total_chunks
+        return chunks
     
-
     def reset(self):
         """Reset search history"""
         self.history = []

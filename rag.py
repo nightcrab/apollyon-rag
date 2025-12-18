@@ -13,7 +13,9 @@ MODEL_NAME_FINAL = "ministral-3:14b"
 
 MAX_PROMPT_SIZE = 100000
 
-def load_or_create_db(path):
+def load_or_create_db(path=None):
+    if not path:
+        return HybridDB()
     db_path = path + ".db"
     if os.path.exists(db_path):
         print("using existing db")

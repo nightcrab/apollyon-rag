@@ -6,9 +6,64 @@
 	let textarea;
 	let chatEl;
 
+	let fileInput;
+
+	let displayedError;
+
 	let messages = [
 		// { role: "user" | "assistant", content: "" }
 	];
+
+	async function handleFileChange(event) {
+
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+			console.log(file);
+            await uploadFile(file);
+			messages = [...messages, { role: "system", content: "Uploaded File: "+file.name }];
+		} catch (error) {
+            displayedError = error.message;
+            console.error(error);
+        }
+	}
+
+	async function uploadFile(blob) {
+
+		const formData = new FormData();
+
+		if (!!blob) {
+			formData.append('file', blob);
+		} else {
+			throw new Error('No file to upload');
+		}
+		
+		formData.append('session_id', 'default_session')
+
+		const response = await fetch(
+			`/api/upload`,
+			{
+				method: 'POST',
+				headers: {
+				},
+				body: formData,
+			}
+		);
+
+		const result = await response.json();
+
+		if (!response.ok) {
+			throw new Error(result.error || 'Failed to upload file');
+		}
+
+		return;
+	}
+
+	function openFile() {
+        fileInput.click();
+		console.log("clicked")
+	}
 
 	async function sendPrompt() {
 		if (!prompt.trim() || loading) return;
@@ -24,6 +79,7 @@
 		messages = [...messages, { role: "assistant", content: "" }];
 
 		messages[assistantIndex].loading = true;
+		loading = true;
 
 		await tick();
 		scrollToBottom();
@@ -44,6 +100,7 @@
 			const { value, done } = await reader.read();
 
 			messages[assistantIndex].loading = false;
+			loading = false;
 
 			if (done) break;
 
@@ -71,7 +128,97 @@
 </script>
 
 
+<div class="chat-container">
+	<input
+		type="file"
+		bind:this={fileInput}
+		on:change={handleFileChange}
+		accept="text/*"
+		style="display: none;"
+	/>
+
+	<div class="messages" bind:this={chatEl}>
+		{#each messages as msg}
+			<div class="row {msg.role}">
+				
+				{#if msg.loading}
+					<div class="bubble typing">Thinking…</div>
+				{:else}
+					<div class="bubble">
+						{msg.content}
+					</div>
+				{/if}
+			</div>
+		{/each}
+
+	</div>
+
+	<form class="composer" on:submit|preventDefault={sendPrompt}>
+		<div class="chat-input">
+			<div class="chat-textarea">
+				<button class="file-button" 
+				on:click={openFile}>
+					<img src="/clip.svg" alt="File">
+				</button>
+				<div class="text-area-container">
+					<div
+						class="text-area"
+						bind:this={textarea}
+						contenteditable="true"
+						bind:textContent={prompt}
+						on:keydown={handleKeydown}
+						rows="1"
+						
+						disabled={loading}
+						role="textbox"
+						tabindex="0"
+					>
+					</div>
+					{#if !prompt.trim()}
+					<div class="placeholder">
+						Ask anything...
+					</div>
+					{/if}
+				</div>
+				<button class="file-button" disabled={!prompt.trim() || loading}
+				on:click={sendPrompt}>
+					<img src="/send.svg" alt="File">
+				</button>
+			</div>
+			<div class="chat-options">
+				<div class="spacer"></div>
+			</div>
+		</div>
+	</form>
+	{#if displayedError}
+	<div class="error-container">
+		<div class="error">
+			{displayedError}
+		</div>
+	</div>
+	{/if}
+</div>
+
+
 <style>
+
+	.error-container {
+		position: absolute;
+		justify-content: center;
+		align-items: top;
+		width: 100vw;
+		height: 100vh;
+	}
+
+	.error {
+		margin-top: 2em;
+		padding:0.5em;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 1em;
+	}
+
 	@font-face {
 		font-family: "Montserrat";
 		src: url("/Montserrat.woff2") format("woff2");
@@ -86,6 +233,7 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		font-weight: 450;
 	}
 
 	* {
@@ -109,6 +257,10 @@
 	.row.user {
 		justify-content: flex-end;
 	}
+	
+	.row.system {
+		justify-content: center;
+	}
 
 	.row.assistant {
 		justify-content: flex-start;
@@ -117,8 +269,8 @@
 	.bubble {
 		max-width: 720px;
 		width: fit-content;
-		padding: 0.85rem 1.1rem;
-		border-radius: 14px;
+		padding: 0.75em;
+		border-radius: 1em;
 		line-height: 1.6;
 		font-size: 0.95rem;
 		white-space: pre-wrap;
@@ -152,12 +304,16 @@
 	}
 
 	
-	textarea {
+	.text-area {
 		all: unset;
 	}
 
-	textarea::placeholder {
+	.placeholder {
 		color: #9ca3af;
+		position: absolute;
+		pointer-events: none;
+		top:0px;
+		left:0px;
 	}
 
 	button {
@@ -168,27 +324,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.send-button {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border-radius: 1rem;
-		padding: 10px;
-		border: none;
-		background: rgb(20,20,20);
-		color: white;
-		font-weight: 500;
 		cursor: pointer;
-		transition: background 0.15s ease;
 	}
 
-	.send-button:hover:not(:disabled) {
-		background: #000000;
-	}
-
-	.send-button:disabled {
+	.file-button:disabled {
 		opacity: 0.8;
 		cursor: not-allowed;
 	}
@@ -230,10 +369,14 @@
 		display: inline;
 		width: 1.5em;
 		height: 1.5em;
-		cursor: pointer;
 	}
 
-	.chat-textarea textarea {
+	.text-area-container {
+		position: relative;
+		width: 100%;
+	}
+
+	.chat-textarea .text-area {
 		
 		font-variant-ligatures: no-contextual;
 		font-size: inherit;
@@ -243,43 +386,37 @@
 		font-family: inherit;
 		display: block;
 	}
+	.row {
+		display: flex;
+		opacity: 0;                  /* Start hidden */
+		transform: translateY(20px); /* Start slightly below */
+		transition: opacity 0.4s ease, transform 0.4s ease;
+		animation: fadeSlideIn 0.4s ease forwards;
+	}
+
+	/* Keyframes for smooth entrance */
+	@keyframes fadeSlideIn {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Optional: slightly different timing for user vs assistant for a more natural feel */
+	.row.user {
+		animation-delay: 0.05s;
+	}
+
+	.row.assistant {
+		animation-delay: 0.1s;
+	}
+
+	.row.system {
+		animation-delay: 0s;
+	}
+
+	/* For the streaming assistant message, make sure new content doesn't trigger re-animation */
+	.row.assistant .bubble {
+		transition: none; /* Prevent re-triggering animation when content updates */
+	}
 </style>
-
-<div class="chat-container">
-	<div class="messages" bind:this={chatEl}>
-		{#each messages as msg}
-			<div class="row {msg.role}">
-				
-				{#if msg.loading}
-					<div class="bubble typing">Thinking…</div>
-				{:else}
-					<div class="bubble">
-						{msg.content}
-					</div>
-				{/if}
-			</div>
-		{/each}
-
-	</div>
-
-	<form class="composer" on:submit|preventDefault={sendPrompt}>
-		<div class="chat-input">
-			<div class="chat-textarea">
-				<button class="file-button" type="submit" disabled={loading || !prompt.trim()}>
-					<img src="/clip.svg" alt="File">
-				</button>
-				<textarea
-					bind:this={textarea}
-					bind:value={prompt}
-					on:keydown={handleKeydown}
-					rows="1"
-					placeholder="Ask something…"
-					disabled={loading}
-				></textarea>
-			</div>
-			<div class="chat-options">
-				<div class="spacer"></div>
-			</div>
-		</div>
-	</form>
-</div>

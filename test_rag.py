@@ -9,7 +9,7 @@ def test_case():
         max_tokens=32,
     )
 
-    db = load_or_create_db("./data/corpus.txt")
+    db = load_or_create_db("./example_data/corpus.txt")
 
     ctx = SearchContext(db, top_k=3)
 

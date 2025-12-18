@@ -20,7 +20,7 @@ def format_chunks(chunks):
         ret += "\n"
     return ret
 
-db = load_or_create_db("./data/corpus.txt")
+db = load_or_create_db("./example_data/corpus.txt")
 
 ctx = SearchContext(db, top_k=5)
 

@@ -53,7 +53,7 @@ class Chunker:
             self.model_path,
             max_tokens=32
         )
-        for chunk in chunks[::20]:
+        for chunk in chunks[::2]:
             title = llm.answer(f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}")
             titles.append(title)
             print(title)
@@ -71,59 +71,101 @@ class HybridDB:
     """
     def __init__(
         self,
-        path: str,
+        path: str = None,
         chunk_size: int = 300,
         overlap: int = 100,
-        embedder_name: str = "all-MiniLM-L6-v2"
+        embedder_name: str = "all-MiniLM-L6-v2",
     ):
-        # Load text using LangChain
-        loader = TextLoader(path, encoding="utf-8")
-        documents = loader.load()
-        
-        # Get full text for checksum
-        text = documents[0].page_content
-        self.checksum = hashlib.md5(text.encode('utf-8')).hexdigest()
-        
-        # Chunk document
-        self.chunker = Chunker(
-            chunk_size=chunk_size,
-            chunk_overlap=overlap
-        )
-        chunked_docs = self.chunker.chunk_documents(documents)
-        self.chunks = [doc.page_content for doc in chunked_docs]
-        self.documents = chunked_docs  # Keep Document objects if needed
-        self.titles = self.chunker.create_titles(self.chunks)
+        self.chunks = []
+        self.documents = []
+        self.titles = []
+        self.embeddings = []
+        self.checksums = []
+        self.keyword_matrix = None  # Will be initialized on first add
 
-        # background corpus for tf-idf
+        # Load background corpus once
+        nltk.download('brown', quiet=True)
+        nltk.download('gutenberg', quiet=True)
+        self.background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
+        self.background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
 
-        nltk.download('brown')
-        nltk.download('gutenberg')
-
-        background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
-        background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
-        
-        # Keyword side
+        # Initialize vectorizer 
         self.vectorizer = TfidfVectorizer(
             stop_words="english",
             max_features=5000,
-            ngram_range=(1,3),
+            ngram_range=(1, 3),
             sublinear_tf=True,
         )
-        tfidf_matrix = self.vectorizer.fit_transform(self.chunks + background_docs)
 
-        self.keyword_matrix = tfidf_matrix[:len(self.chunks)]
-        
-        # Embedding side
+        # Initialize embedder
         self.embedder_name = embedder_name
         self.embedder = SentenceTransformer(self.embedder_name)
-        self.embeddings = self.embedder.encode(
-            self.chunks,
+
+        # Initialize chunker
+        self.chunker = Chunker()
+
+        self.save_path = None
+        
+        if path:
+            self.save_path = path + ".db"
+            self._process_document(path)
+
+
+    def _process_document(self, path: str):
+        if not path or not isinstance(path, str):
+            raise ValueError("Invalid path provided.")
+
+        # Load text
+        loader = TextLoader(path, encoding="utf-8")
+        documents = loader.load()
+
+        # Compute checksum
+        text = documents[0].page_content
+        checksum = hashlib.md5(text.encode('utf-8')).hexdigest()
+        self.checksums.append(checksum)
+
+        # Chunk document
+        chunked_docs = self.chunker.chunk_documents(documents)
+        new_chunks = [doc.page_content for doc in chunked_docs]
+
+        # Append to existing
+        self.chunks.extend(new_chunks)
+        self.documents.extend(chunked_docs)
+        new_titles = self.chunker.create_titles(new_chunks)
+        self.titles.extend(new_titles)
+
+        # Embeddings: Encode only new chunks and append
+        new_embeddings = self.embedder.encode(
+            new_chunks,
             normalize_embeddings=True,
             show_progress_bar=True,
         )
-        
-        self.save(path + ".db")
-    
+        if self.embeddings:
+            self.embeddings = np.vstack((self.embeddings, new_embeddings))
+        else:
+            self.embeddings = new_embeddings
+
+        all_for_tfidf = new_chunks + self.background_docs
+        if self.keyword_matrix is None:
+            tfidf_matrix = self.vectorizer.fit_transform(all_for_tfidf)
+            self.keyword_matrix = tfidf_matrix[:len(new_chunks)]
+        else:
+            new_tfidf = self.vectorizer.transform(new_chunks)
+            self.keyword_matrix = np.vstack((self.keyword_matrix.toarray(), new_tfidf.toarray()))
+
+    def add_file(self, path: str):
+        """Add a new document file and process it incrementally."""
+        try:
+            self._process_document(path)
+
+            if self.save_path:
+                self.save(self.save_path)
+
+            print(f"Successfully added {path}")
+        except Exception as e:
+            print(f"Error adding {path}: {e}")
+
+
     def _1d_filter(self, scores, side_weight=0.3, center_weight=0.4):
         """Apply 1D context filter to scores"""
         context_scores = scores.copy()

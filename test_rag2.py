@@ -1,10 +1,13 @@
 from rag import *
 from llm import StatelessLLM
 
-MODEL_NAME_FINAL = "granite4:1b"
+MODEL_NAME_FINAL = "ministral-3:14b"
 
 def test_case():
     rag = RAGInstance(verbose=True)
+
+    rag.add_file("./example_data/corpus.txt")
+
     task = "Who is Kitayama Tou?"
     formatted_chunks = rag.retrieve(task, iterations=5)
 

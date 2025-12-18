@@ -6,3 +6,6 @@ langchain
 langchain-text-splitters
 langchain_community
 nltk
+fastapi
+uvicorn
+python-multipart

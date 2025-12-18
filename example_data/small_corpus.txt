@@ -1,0 +1,448 @@
+
+---
+# 20th Century.md
+
+
+Erasure was always present, but its effects on human civilization accelerated rapidly in the 20th century.
+
+Erasure began appearing during the 19th century in small bursts, slowly increasing in severity. While this caused disruption, particularly to European imperialism, it was manageable until the first major Erasure disaster. The first major Erasure Disaster occurred in Europe, with the outbreak and escalation of the Great War in 1912.
+
+Aggravated by the scale of the conflict and the arms-race that occurs, Europe was laid to ruin by natural disasters and monster attacks. This cascades, leading to the collapse of western empires such as the British Empire, resulted in the mass independence of ex-colonies.
+
+In the east, post Meiji era Japan saw the failure of western imperialism. This lead to a decade long erosion of previously appealing ideas of expanding Japan's territory, with domestic political tastes focusing on more conservative industrialisation and insulation against disaster. Military expansion, such as the second Sino-Japanese war, was avoided altogether as all-out war would result in cataclysmic outcomes for involved parties.
+
+By 1940, the Kuomintang won the Chinese civil war, establishing the Chinese Democratic Republic. 
+
+Despite this, as countries rebuilt, it became clear that Erasure was a phenomenon that evolves not only with conflict but also economic growth, advanced technology and expansive industry.
+
+In the decades following the Great War, the Japanese government lost the desire to maintain colonies, amidst the difficulty of maintaining overseas power in the face of the growing E-field. 
+
+Global progress culminated in multiple global disasters in the early 1950s, including the 1953 **Erasure Disaster of Japan**, consisting of multiple natural disasters that destroy major cities including Tokyo.
+
+The shock of the disaster, which dismantled global economies, sent Japan into a long period of stagnation and prompted the development of government and social systems such as the Special Zone system, which coordinated the allocation of Artifacts with dense industrial research zones in major cities.
+
+#### Japan's Colonies
+
+The 1953 Erasure Disaster effectively ended Japan's ability to administer colonies. The territories of Taiwan and Korea were abandoned by Japanese leadership, leading to a sudden and extreme power vacuum in these countries.
+
+Following the 1953 Disaster, lingering E-field disturbance in the East China sea and the Sea of Japan made it impossible for Japanese in Korea and Taiwan to repatriate. This also ended effective communication or movement of supplies across water, isolating Japan.
+
+In Korea, the exiled Korean Provisional Government (KPG) took over from the Japanese administration, who lacked the support necessary to maintain control of the peninsula. This led to the creation of the Republic of Korea.
+
+Japanese influence in Taiwan continued, however without the ability to communicate with Japan itself, officials declared a 'temporary sovereignty' of Taiwan that enabled it to act as its own country, with a democratic institution severed from Japan. This transitioned into a permanent system as the Japanese government in 1990 acknowledged Taiwan as being officially independent.
+
+
+
+---
+# Academy System.md
+
+In New Tokyo, Stacker Academies (stacker schools) are institutions that conduct training of new stackers as well as artifact research.
+
+### Ranking System
+
+In New Tokyo, stackers are graded on their overall power using a grading system from C to S.
+
+Grading incorporates multiple criteria including affinity, artifact power, tournament record, and professional record.
+
+#### Affinity Score
+
+The Affinity Score (or nullification coefficient) is a measure of a stacker's inherent artifact affinity. It is measured by aggregation of nullification scores using a set of standard artifacts.
+
+A caveat to this system is that non-Japanese such as [[Evangeline White]] have uncharacteristically low NC scores due to a lack of affinity with the standard artifact set.
+
+#### Tournaments
+
+Stacker tournaments are common in Japan, occurring at the school, ward, prefectural and national level. These events compare stackers directly via one on one combat.
+
+The National Stacking Tournament held every year is open to all S-class stackers.
+
+The NST is a 7 round single elimination single bracket contest. Therefore, the champion is the stacker who wins against 7 S-class opponents in a row while climbing the bracket.
+
+#### Professional Record
+
+For stackers who are graduated or currently working, the professional record takes into account a stacker's history in defeating Erasure monsters.
+
+### Souten Academy
+
+Souten is a stacking school attended by many prominent characters.
+
+Considered one of the four top stacker academies of New Tokyo, Souten is home to many of the most competitive students and has an impressive history, having graduated 40 S-classes since its founding in 1980, and several champions of the National Stacking Tournament, the most recent of whom being [[Ayano]].
+
+Out of the four top academies, Souten is the second youngest. The other academies are:
+
+1. ---- Established 1960.
+2. ---- Established 1964.
+3. ---- Established 1990.
+
+
+---
+# Artifact Synthesis.md
+
+**Artifact Synthesis** is the concept of purposefully creating artifacts, rather than simply allowing them to emerge naturally.
+
+Once the link between 'memories' and 'artifacts' was established by Kusnetzov in the 1970s, it became plausible that the world's collection of artifacts was not fixed; it could be expanded through intentional effort.
+
+However, the task of creating Artifacts is difficult:
+
+1. Most S-class artifacts are hundreds of years old. Without improving on this baseline, it would similarly take centuries to create new S-class artifacts through a modern day program.
+2. Artifacts that are disproportionately strong despite their age are frequently born out of massive human conflict and hardship; the question of how to induce such circumstances is not only a problem in ethics but also logistics, with proposed approaches being questionably sustainable.
+3. Since Artifacts are created by humans, their production rate is fundamentally limited by the number of people on Earth.
+4. Even with an abundance of Artifacts, the factors behind an individual Stacker's affinity remain elusive and are seemingly random. Therefore, humanity may not be able to utilise such a large number of synthetic artifacts unless they were of a very high grade.
+
+Before the Regression Hypothesis was clarified, it was thought that long-term synthesis projects could create large numbers of A-class artifacts by the 2100s and then S-class artifacts by the 2300s.
+
+However, models of the E-field increasingly predicted that by the time such programs bore fruit, they would have already been destroyed.
+
+#### Vault Projects
+
+Conceived by Kusnetzov and peers in 1990, the idea of an Artifact Vault essentially accepted the inevitability of the Regression Hypothesis. 
+
+Instead of attempting to produce enough Artifacts to suppress the E-field in 'current humanity's lifetime', the Vault project would aim to carry civilisation's Artifacts, and potentially instructions for synthesis programs, through the dark ages and into the humanity that would emerge from the ashes in potentially hundreds of thousands of years.
+
+Vaults would also attempt to warn future humanity of the E-field, and Erasure so that they would have ample time to prepare for it.
+
+Some vaults were constructed in the early 2000s, and were designed to withstand not only global regression but the passing of millennia.
+
+
+
+---
+# Artifacts.md
+
+In God of Stackers, the universe's counter to **Erasure** is **Artifacts**. 
+
+Artifacts are ordinary objects that have historical importance to humans. Things like family heirlooms and museum pieces are a common example.
+
+The older and more important an object is, the stronger it is as an Artifact.
+
+All people have the ability to 'use' Artifacts, and gain magical powers in the process. People who have good affinities for this usually become Stackers, and Artifacts become a part of their occupation.
+
+Very weak artifacts, things like childhood toys or old swords can only express abilities if the Stacker activating them has a very high affinity.
+
+A Stacker's affinity is both general (applying to all Artifacts) as well as specific, tending to Artifacts that align with the person's own history.
+
+#### Memories
+
+Memories quantify what exactly gives artifacts their powers.
+
+When objects exist near or are pivotal in the affairs of humans, they gain memories of stories, people or events that involve them.
+
+Humans also carry memories, generally through family heritage and their own culture.
+
+When a Stacker's memories align with those of their Artifact, they're said to "have an affinity" for it.
+
+#### Relationship to the E-field
+
+Artifacts suppress Erasure, but at the same time, rely on it, or the underlying E-field, in order to exert their effects.
+
+Where there is no E-field, such as prior to the 20th century, Artifacts have limited to no effect.
+
+Similarly, the potential of extremely high class Artifacts can only manifest in very strong E-fields. These so called SS-Class Artifacts have limits beyond what the existing E-field can support. 
+
+This paradoxical relationship between Artifacts and Erasure raises significant questions as to what exactly the E-field is, and how it can manifest phenomena that seem to be complete opposites to each other.
+
+#### Activation
+
+Artifacts don't express an E-field negation or other effects unless paired with a wielder who has an affinity.
+
+#### Examples
+
+1. Taki's great grandfather's sword. This sword dates back to a World War and has some importance to Taki's family. It is considered a weak artifact.
+2. Evangeline's great sword. This sword dates back several hundred years, and has been used by kings, famous warriors, and other stackers. It is considered a powerful artifact.
+3. The Imperial Palace in Old Tokyo. This is not really an object but an entire building. Historical sites such as castles or places of government typically exert an Artifact-like suppression of Erasure but can't really be used by stackers due to its size.
+
+#### Abilities
+
+All Artifacts suppress Erasure. Being near an active Artifact should nullify E-fields according to the strength of the Artifact; and multiple in a single location will be able to nullify stronger E-fields.
+
+Artifacts do not remove the E-field, but they suppress it and its manifestation, lowering its measurable strength. If an Artifact is disabled, the E-field immediately remanifests. Measuring the implicit E-field (whatever is still there during suppression) is not possible with current technology.
+
+A city like New Tokyo which is full of advanced technology, remains liveable thanks to its large population of Stackers and collection of Artifacts, which it absorbs from surrounding areas in Japan via government directives.
+
+When used by Stackers, Artifacts also provide physical protection, mobility and strength. A typical Stacker is comparable physically to an MBT, so many things that would otherwise kill normal people can only injure them.
+
+Artifacts improve their wielder's martial abilities, allowing them to move quickly, jump great distances, or manipulate heavy objects. Weapon artifacts like swords inflict more damage than they would as non-artifacts. For instance, an S-class great sword ([[Evangeline White]]) can pierce 5 meters of steel.
+
+Truly superhuman feats such as flying, are not possible. (though possible with harnesses in [[New World]])
+
+#### Physical Nullification Field
+
+A nullification field is a region of artifact influence that closely adheres to a stacker's physical body. It reduces or blocks most forms of harm, such as:
+
+* Illness
+* Physical attacks
+* Toxic substances
+* Radiation
+* Temperature
+
+It can be seen as a passive effect that keeps the stacker's physical body in a 'normal' state. 
+
+#### Power Levels
+
+Stronger Artifacts give greater effects, ranging from E-field nullification to physical damage resistance that improves the durability of the Stacker's body. 
+
+A Stacker's affinity for their Artifact, Artifact power, and skill together contribute to their Letter Class, ranging from C to S.
+
+For ease of comparison, we'll list how the Stacker classes perform in a conventional world against technology (no Erasure or magitech, and pre-New World).
+
+**C**: Taki at the beginning of the story. Exhibits some affinity but has no skill and wields a relatively poor artifact. Can fight monsters, but would die to a gunshot like a normal person.
+
+**B**: Able to resist small arms fire and reach peak human athletic performance without much effort.
+
+**A**: Certifiably superhuman and comparable to early MBTs. Requires an artillery shell or similar to kill.
+
+**S**: Durability or offensive power of a battleship. Could be killed by a cruise missile or hit from a large calibre naval gun.
+
+#### Population
+
+Approximate numbers of Stackers of each class in New Tokyo, and Japan (in parentheses):
+
+**S**: ~100 (200).
+**A**: ~1,000 (5,000).
+**B**: ~5,000 (50,000).
+**C**: ~50,000 (1,000,000).
+
+(Most C-class are not actively serving).
+
+
+
+
+---
+# Central Complex.md
+
+The Central Complex is an underground structure with multiple purposes. These include power generation for New Tokyo, as well as providing emergency shelter for residents. Its most important purpose is to house the **Central Computer**.
+
+The Complex has a modular design, consisting of many vertical slices, which allows it to be extended deeper underground without compromising seismic isolation.
+
+There are 16 different sections of the complex, each of which correspond to a different prefecture of New Tokyo. Each section is around 30 floors deep and structurally isolated from the other 15.
+
+#### Power
+
+The Central Complex generates a large amount of energy for New Tokyo through the use of **E-Field Engines**. This captures strong differentials in the E-Field, abundant in New Tokyo and converts them into power. These are common in Special Zones.
+
+#### Heat
+The entirety of the complex is cooled via a closed network of dielectric fluid circulated via pumps. Being located underground helps to stabilise the complex's temperature. In addition, heat is removed from the complex via:
+1. Natural draft towers operated above ground.
+2. Dumping of heat into large natural waterways.
+3. Evaporative and other conventional cooling technologies.
+
+#### Central Computer
+
+The Central Computer occupies floors B10 to B30. The CC consists not only of computers but also emergency power systems, fire control systems, laboratories and maintenance accessways. 
+
+Each alternating floor of the complex contains a designated cluster of CC, across 20 floors and 16 sections yielding 160 individual clusters.
+
+A CC cluster consists of a large array of computers submerged into a bath of dielectric fluid, which is circulated by a large pump.
+
+The cluster on floor B15 of section 2C contains the Fusing Harness, where the human operator, necessarily a hybrid, may operate the entire computer.
+
+The CC can meet the daily needs of operating New Tokyo using only 1 of its 160 clusters. In general, between 1 and 10 clusters are allowed to be activated for any task. If fully stabilised by a Hybrid, the CC can safely operate 150 of 160 clusters before exceeding thermal limitations. Remaining units provide redundancy.
+
+When Ayano joins the Hybrid project initially, CC is only ~10% complete. It is 50% complete when Taki arrives in the Central Complex, with 80 of the planned 160 clusters operable.
+
+
+
+---
+# End of the Main Story.md
+
+### Prior Setup: Ayano's Body
+
+At the end of the Investigation arc, Evangeline and Taki discover Ayano's body in the Central Complex and successfully rescue her. However, despite their best efforts, they discover she is unresponsive and remains in a comatose state despite treatment. This is highly disheartening for Taki, who believes she is dead. They transfer her to the care of the EM club and remain unsure what to do. This is unresolved for most of the story.
+
+### Final Fight 1
+
+Nakamura determines that in order to stabilise Ayano (or to harness Desire for his own means), he needs to resolve her regrets. He believes that Ayano's largest regret is her inability to protect and her desire to return to Nishino village, so his solution is to destroy the village using Erasure, turning Desire into a vengeful spirit who would fuse with his own memories and finally create the God of Stackers.
+
+The main characters are reacting to his actions, and once they realise that his plan is to destroy Nishino village, everyone immediately travels there to stop him.
+
+He beats them there, and heads to the Nishino lab to orchestrate a massive Erasure event that creates a monster out of all of the people that have died in Nishino due to past disasters and due to the lab experiments.
+
+The monster is too powerful for anyone to defeat, but Desire, who is actually living within Taki's sword, becomes empowered by the massive E-field and finally manifests in person to speak to him. She tells him they need to save Nishino village, and that she's going to help him.
+
+With Desire's power at an all-time high, Taki's sword becomes an SS-class artifact, and he himself becomes an S-class stacker while he has it. He uses it to defeat the Erasure monster and dispels the entire E-field over Nishino, saving everyone.
+
+### Aftermath
+
+After saving Nishino village, Taki passes out and is taken to his parents' home. The rest of the characters have no idea what happened and don't realise the sword is important. However, one of the stackers in the main party is actually on the side of Dr. Nakamura, and is convinced to steal the sword while everyone is distracted, taking it to New Tokyo.
+
+Once Taki wakes up, he frantically searches for the sword, believing he has finally found Ayano, but cannot find it. Everyone realises that the sword was stolen and is now on its way to Nakamura.
+
+Hino believes correctly that Nakamura may be planning to use the sword, which is a vessel for Desire, in order to create a 'proto-Type 3' using a temporary fusion of his memories, the Central Computer, and Desire in order to become a vengeful God of Stackers.
+
+### New Tokyo Confrontation
+
+Having seen the true face of Nakamura after his attempt to destroy Nishino village, Taki finds him completely unforgiveable. He, Evangeline, Yuuko and the others return to New Tokyo to finally confront Dr. Nakamura. However, as usual, he is always one step ahead of them.
+
+By the time they arrive, Nakamura is ready to undergo the experimental fusion process. He posses Desire, and Rationality, and uses the fusion device to ascend.
+
+### The Proto-God
+
+Fusing his memories with Desire and Rationality, Nakamura becomes a proto-god. Empowered by Nakamura's deep trauma and the vast computational power of Rationality and the Central Computer, he becomes a god with one purpose. To destroy Erasure.
+
+Using the computational power of the Central Computer, the Proto-Hybrid realises that the ultimate evil in the world are *humans*. Humans' very existence instigates Erasure. Their sin, greed and ambition drives their own extinction. The only way to 'save them' is to burn the majority to preserve the core of civilisation. Then and only then, Nakamura claims, can the Regression Hypothesis be reversed.
+
+The combined memory of Nakamura and Desire's raw will to end Erasure have culminated in a ruthless, vengeful God of Stackers. He will not stop at New Tokyo, or Nishino village, or even Japan. He will destroy the world and purify it of humanity's hubris.
+
+#### Final Fight 2 - Part 1
+
+He easily defeats Evangeline, Yuuko and everyone else. It's hardly a contest. 
+
+Taki feels helpless. Hino tells Taki that the only way they can win is to bring Ayano back so that she can fight Nakamura. Taki says this must be impossible; Nakamura currently has Desire (who he believes is Ayano).
+
+Hino tells Taki that Ayano's body is actually still alive and a part of her is trapped in her own mind. He needs to take her into the fusion machine and undergo the process with her, entering her memories and using his own willpower to wake her from her coma and create a partial god.
+
+Seeing everyone else dead or dying at the hands of the Proto-God, Taki accepts and enters the fusion machine with Ayano's body.
+
+#### The Memory Arc
+
+After undergoing fusion, Taki finds himself back in Souten Academy. In particular, he finds himself back in the National Stacking Tournament. But something is different.
+
+This is *the previous year's* National Stacking Tournament. He's re-experiencing the tournament that Ayano won, and she's in there with him. He tries to talk to Evangeline, but she ignores him as if he isn't there.
+
+He immediately goes to Ayano for help, and it turns out she is the only one who can see him. But she's confused and doesn't understand why he's there. The memory ends before he can explain what's going on.
+
+Taki ends up in the Central Complex, in the months after the tournament. He sees Ayano talking to Dr. Nakamura about the Hybrid project.
+
+Again, as he tries to talk to Ayano, to get her help, he's always interrupted. Every time he finds himself reliving different periods of the past. If he tries to tell her anything about the fight with Nakamura or asks her to wake up, he's immediately displaced.
+
+After this, he realises that he isn't time travelling. He is inside of Ayano's memories, and he's experiencing an infinite cycle in which Ayano relives her past over and over again.
+
+After everything, the player, and Taki, finally gets to experience the full truth of everything that's happened to Ayano since she left the village, and to understand the reasons why she left Nishino and never returned home.
+
+Taki eventually ends up back in Nishino village, as a 12 year old boy, and Ayano is there as a 13 year old girl. He realises this is the day that Ayano leaves the village.
+
+Instead of telling Ayano that he won't go to New Tokyo with her, he stops her. He finally tells her that he understands why she left the village, and why she abandoned them. This finally allows him to get a reaction from her. 
+
+He tells her he forgives her, and that he wants to help her. Instead of letting her go, he wants to be with her. He came all the way to New Tokyo to find her. He became a stacker. He fought countless monsters, battled his way through tournaments, defeated evil scientists, and all he wants to do is finally be with her. Not only that, but he wants to help her finally achieve her dream, no matter what it takes.
+
+Hearing this, the young Ayano is confused at first, and asks what kind of nonsense Taki is spouting. He replies that she doesn't have to worry about it, because he's going to New Tokyo with her.
+
+### Confrontation with Ayano
+
+The memory is interrupted, but this time, they appear in the courtyard of Souten Academy, with nobody else around.
+
+Ayano is there. It's her real, adult self. Taki is himself too. It's clear that these are the versions of them from the real world, not the memory-scape.
+
+In this dream-like location that only vaguely resembles the school they both attended as stacker students, Ayano is hesitant to talk to Taki. However, it is clear that she remembers everything.
+
+She says she's sorry and he says he forgives her. She says she's mad that he didn't come with her and he says he's sorry. She says it's okay. She says she shouldn't have dragged him into this to begin with. She self-deprecates about how her obsession with one childhood promise ruined everything and nearly had Nishino village destroyed.
+
+They talk everything out. Inside this world, they have all the time they want to finally deal with everything, and get over the last five years of separation.
+
+Ayano still feels some regret, but once she realises that Taki genuinely forgives her and finally believes in her dream, she starts to cry and Taki embraces her. 
+
+After she's calmed down, they return to the question of the fight in the real world, and how they should defeat the Proto-God.
+
+Ayano claims that even though Rationality fused with Nakamura, that part of her is still fundamentally Ayano. That means that if Taki and her were to attempt fusion with the Central Computer, they could likely obtain half of the system, bringing part of Rationality to their side. That would allow them to fight Nakamura on even terms. God versus god.
+
+Though hesitant, Taki agrees to go through with it. He says he will help her fuse if that's what she needs him to do.
+
+Before leaving the dream, Ayano comments that she doesn't know what will happen to her mind or her body as a result of the fusion. She will likely not be the same person that Taki knew. She won't even be a person any more. Perhaps she would become a force of nature, like Desire, or an impersonal computer, like Rationality. It's unlikely they would ever be able to speak to each other like this again.
+
+In response, he asks her, if it were up to her, would she choose to remain human or would she choose to leave everything behind and become a god?
+
+Ayano says that she would do it, but not alone. The burden of being a god can't rest on just one person. At the same time, she doesn't want to force Taki to bear the weight of her own dreams.
+
+Taki replies that it's not just her dream. It's both of their dreams. After all, they made a promise, and he fully intends to protect that now, even if he didn't back then.
+
+Ayano says it's ridiculous to hold onto something they said as children. Taki replies that it doesn't matter if he still believes in it. He's going to help her shoulder the burden of godhood, even if it destroys him too. He believes in her, and he wants her to believe in him too. Just one more time.
+
+The dream is beginning to fade, and the two of them can see the visage of Souten Academy slowly fading away. They are going to wake up soon.
+
+After a few moments, Ayano tells him that there's something they might never have another chance to do. After all, the coming battle with Nakamura is going to be one to the death, and they don't know if they'll survive.
+
+Taki asks what she's talking about, and she kisses him. The dream ends.
+
+### Final Fight 2 - part 2
+
+Taki and Ayano both wake up in real life and discover that only a few seconds have passed. Furthermore, Ayano is completely awake and has full access to her artifact, the Kogarasumaru. They realise that the fusion worked. They became a Type 3 Hybrid. Not as a single person, but a combined entity, like the Proto God. Ayano's memories, Taki's will, the few clusters of Rationality that they managed to fuse with.
+
+Taki and Ayano both experience each other's viewpoints, and together they confront Dr. Nakamura, who still wields Desire and his portion of Rationality.
+
+Entering a fierce battle with Nakamura, it comes down to the few characters who are still alive to go into the Central Computer and physically destroy the computers that Nakamura relies on. This is Kenji, Yuuko, Evangeline, Hino, etc.
+
+We follow the routes of all of these characters as they attempt to dismantle Nakamura's access to power and computers, while Taki and Ayano are both fighting Nakamura.
+
+Eventually, the protagonists succeed in defeating Nakamura, landing a killing blow on his human body and severing him from both Desire and Rationality. Both aspects of Ayano immediately re-join her, and Taki finds himself losing control as Desire takes his place.
+
+As he lays there, Nakamura witnesses Ayano becoming a true Type 3 Hybrid, and smiles faintly, before dying.
+
+### Aftermath
+
+The story ends with a cutscene. After defeating Nakamura, Ayano discovers she has complete control over the E-field around New Tokyo. The entire Central Computer is running and under her command. It not only obeys her will; she is it and it is she.
+
+All over the city, the massive Erasure disaster lifts, almost like magic. Stackers that had been fighting monsters or rescuing people find the Erasure simply evaporating.
+
+We see the points of view of several characters across New Tokyo and its surroundings as they watch this happen. It is clear that humanity is ushering in a new age.
+
+In Nishino Village, as the people are still rebuilding, they find the E-field vanishing as well. It's a miracle.
+
+
+---
+# Erasure.md
+
+The Erasure, or just Erasure, is a natural phenomenon discovered by scientists in the 20th century. It acts as an ever-present antagonist to human civilisation, built into the laws of the universe.
+
+It is the natural counter to technology, though it is countered by [[Artifacts]], and can theoretically be controlled via [[Hybrids]].
+
+### **The E-Field**
+
+Erasure has a different level of strength at every location in space. The relation of space to frequency of information Erasure is known as the E-Field. 
+
+Erasure strength is reported on a logarithmic scale. It is measured in bits/second.
+
+Artifacts exert negative E-Fields which nullify the E-Field around them.
+
+Standing in a location where the E-Field is very strong results in DNA corruption, as well as memory loss. Probability of experiencing a Displacement-type event increases.
+
+### **Types of Erasure Events**
+
+High concentrations of the E-Field will occasionally cause spontaneous anomalies called Erasure Events. These are usually **bad** things.
+
+
+* **Disaster-type**: These are the primary outcomes of an Erasure event. Intense earthquakes, weather events, collapse of structures and direct destruction of technology.
+* **Memory-type**: This affects written records, memories of people, and any kind of stored information. Strong E-fields cause these to become unintelligible or unrecoverable.
+* **Displacement-type**: The E-Field can induce coherence across parallel worlds, causing memories, objects or people to displace, being replaced by slightly alternative versions of themselves.
+* **Monster-type**: In the aftermath of major E-field events in populated areas, destroyed information can coalesce into abstract or monstrous lifeforms that lash out against humans.
+
+### Erasure Monsters
+
+These are abstract creatures, often embodying ideas, memories or concepts that can be formed from the remains of humans, their culture, or their technology.
+
+They frequently possess their own PNFs, protecting their physical bodies from harm. Therefore, the most effective weapons against these creatures is artifacts. However, they can be destroyed using sufficiently powerful conventional weapons such as cannons and explosives.
+
+Left to their own, all Erasure monsters are temporary existences, and will eventually dissolve into the E-field. This typically takes a long time however, particularly for powerful monsters who can take years to disappear.
+
+Not all Erasure monsters are hostile, but many of them are. Most importantly, all monsters radiate information, which keeps the E-field level around them elevated until they disappear. It is imperative to remove them as soon as possible.
+
+### History
+
+Erasure as a scientific phenomenon was first observed in experimental nuclear reactors and computers in the 1900s. Scientists developing reactors saw failure rates and catastrophic events that greatly exceeded anything predicted by existing theory. Attempts to make reactors more stable had worse returns than expected, with additional safety mechanisms seeming to paradoxically cause higher rates of failure in components they were meant to safeguard.
+
+When a similar effect was noticed in the development of computers, and later in experiments conducted by quantum physicists, scientists developed a theory that all of these effects were related. By placing nuclear or computing technology in the vicinity of experiments, something called "Sudden Coherence" was observed. This was equivalent to the instantaneous and inexplicable erasure of information at the quantum level, and seemed to become more frequent in the presence of human technology.
+
+Sudden Coherence was largely ignored outside of experimental research and theoretical physics, until it rapidly grew in the strength up along with advances in human civilisation in the early 20th century. It was during this time that it gained the moniker of 'Erasure'. Erasure had substantial effects on the growing human civilisation, destroying infrastructure, research, and even  books and written records, causing languages to be lost or texts to become unintelligible.
+
+At the same time, humans gained a better understanding of The Erasure, identifying something called the "E-Field", measurement of which could accurately predict the rate and frequency of information erasure at a given point in space.
+
+The relationship between historical objects and Erasure was also discovered. Objects with a strong E-Field rejection effect were referred to as Artifacts.
+
+Once it was discovered that Artifacts could be used to stabilise nearby information, such as research or advanced technology, scientific progress resumed, but to a limited extent. Massive industry as in the early 20th century was no longer possible, even with Artifacts.
+
+
+### **Threat to Humanity?**
+
+A famous point of uncertainty regarding the Erasure is whether it poses an existential threat to humanity; or, whether it can be lived alongside if carefully managed.
+
+Prior to the 1960s, it was assumed that Erasure, while dangerous, was a natural force like the weather that could be managed. In the worst case, it was assumed that Erasure might prevent human civilisation from passing a certain threshold; but if that threshold was closely ridden, then civilisation and Erasure would merely coexist.
+
+However, after large numbers of artifacts were destroyed in Erasure events such as the 1953 Disaster of Japan, scientific projections of E-field strength and humanity's ability to manage produced the **Regression Hypothesis**.
+
+The Regression Hypothesis is a global extrapolation of the observation that in all experiments, Erasure has a tendency to **over-erase**. In principle, a system whose total complexity increases over time does not reach a point of equilibrium, but rather enters an oscillating state based on the rate of complexity increase. A rapid increase in information results in a higher peak and a lower valley; the system can rapidly increase to a certain point, but will experience an extreme backslide, before eventually recovering.
+
+According to the hypothesis, Earth reached its peak level of divergent complexity in **1975** and is currently in the slow process of regressing to an extremely low level complexity. 
+
+This is not immediately apparent without measurement, as complexity is generally unevenly distributed and in some areas may be increasing. However on a global scale, maintaining certain peaks of information (such as Japan's Special Zones) becomes impossible without widespread destruction in the rest of the system.
+
+By the time Earth exits its regressive phase, this would result in a massive loss of human life, as well as culture, language and scientific understanding.
+
+Since regression models remain the most accurate in their predictions of E-field levels since their inception in the 1970s, the hypothesis is widely regarded as correct. Questions as to whether the process can be stopped or reversed, perhaps through **E-Dampening** remain undecided (until 2025).

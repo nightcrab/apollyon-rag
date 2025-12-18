@@ -8,8 +8,8 @@ import random
 from hdb import HybridDB, SearchContext
 from llm import StatelessLLM
 
-MODEL_NAME = "granite4:1b"
-MODEL_NAME_FINAL = "granite4:1b"
+MODEL_NAME = "ministral-3:14b"
+MODEL_NAME_FINAL = "ministral-3:14b"
 
 MAX_PROMPT_SIZE = 100000
 
@@ -136,7 +136,11 @@ class RAGInstance:
         self,
         path: str
     ):
-        self.db.add_file(path)
+        if len(self.db.chunks) == 0:
+            self.db = load_or_create_db(path)
+            self.ctx = SearchContext(self.db, top_k=2)
+        else:
+            self.db.add_file(path)
 
     def retrieve(
         self,
@@ -146,6 +150,9 @@ class RAGInstance:
         """
         Make retrievals using iterative lookup.
         """
+
+        if not self.contains_documents():
+            return "No documents."
 
         new_chunks = self.ctx.search(task)
 

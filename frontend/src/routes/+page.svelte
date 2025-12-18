@@ -6,6 +6,8 @@
 	let textarea;
 	let chatEl;
 
+	let uploading = false;
+
 	let fileInput;
 
 	let displayedError;
@@ -21,7 +23,9 @@
 
         try {
 			console.log(file);
+			uploading = true;
             await uploadFile(file);
+			uploading = false;
 			messages = [...messages, { role: "system", content: "Uploaded File: "+file.name }];
 		} catch (error) {
             displayedError = error.message;
@@ -197,6 +201,13 @@
 		</div>
 	</div>
 	{/if}
+	{#if uploading && !displayedError}
+	<div class="error-container">
+		<div class="error">
+			Uploading file...
+		</div>
+	</div>
+	{/if}
 </div>
 
 
@@ -208,6 +219,9 @@
 		align-items: top;
 		width: 100vw;
 		height: 100vh;
+		top:0px;
+		left:0px;	
+		pointer-events: none;
 	}
 
 	.error {

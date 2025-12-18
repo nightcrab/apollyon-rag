@@ -18,7 +18,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,7 +50,7 @@ async def chat(req: ChatRequest):
         media_type="text/plain",
     )
 
-@app.post("/api/upload/")
+@app.post("/api/upload")
 async def upload_file(
     file: UploadFile = File(...),
     session_id: str = Form("default_session")
@@ -61,11 +63,14 @@ async def upload_file(
             content=outcome
         )
         
-        llm = get_session(req.session_id)
-        llm.add_file(outcome.file_path)
+        llm = get_session(session_id)
+        print("adding file to session...")
+        llm.add_file(file_path)
             
         return response
     except Exception as e:
+        import traceback
+        print(traceback.format_exc())
         return JSONResponse(
             status_code=500,
             content={"message": f"Error uploading file: {str(e)}"}
@@ -78,7 +83,7 @@ async def upload_file(
 async def lifespan(app: FastAPI):
 
     sessions["default_session"] = StatefulLLM(
-        "granite4:1b"
+        "ministral-3:14b"
     )
 
     yield

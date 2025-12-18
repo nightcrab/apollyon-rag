@@ -2,11 +2,13 @@ import requests
 import subprocess
 import json
 import httpx
-from typing import Optional
+from typing import Optional, List
+from concurrent.futures import ThreadPoolExecutor
 import os
+import time
 
 OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "granite4:1b"
+DEFAULT_MODEL = "ministral-3:14b"
 
 class StatelessLLM:
     """
@@ -26,7 +28,11 @@ class StatelessLLM:
         install_model(self.model)
 
 
-    def answer(self, prompt: str) -> str:
+    def answer(
+        self, 
+        prompt: str,
+        verbose: bool = False
+    ) -> str:
         payload = {
             "model": self.model,
             "prompt": prompt,
@@ -45,13 +51,41 @@ class StatelessLLM:
         resp.raise_for_status()
         data = resp.json()
 
-        return data.get("response", "").strip()
+        ret = data.get("response", "").strip()
+
+        if verbose:
+            print(ret)
+
+        return ret
+
+    def batch_answer(
+        self,
+        prompts: List[str],
+        max_workers: int = 16,
+        verbose: bool = False
+    ) -> List[str]:
+        """
+        Generate answers for a batch of prompts in parallel.
+        """
+        
+        start_total = time.time()
+
+        results = []
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            results = list(executor.map(self.answer, prompts))
+    
+        #for prompt in prompts:
+            #results.append(self.answer(prompt))
+
+        end_total = time.time()
+
+        print(f"Batch processed in {end_total-start_total}s")
+
+        return results
 
     def stop(self):
         subprocess.run(["ollama", "stop", self.model])
-
-def utf8len(s):
-    return len(s.encode('utf-8'))
 
 
 def install_model(model: str) -> None:

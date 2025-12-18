@@ -10,7 +10,7 @@ import rag
 import llm
 
 OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "granite4:1b"
+DEFAULT_MODEL = "ministral-3:14b"
 
 class StatefulLLM:
     def __init__(
@@ -29,7 +29,7 @@ class StatefulLLM:
         self.max_history_size = max_history_size
         self.rag = rag.RAGInstance()
 
-    def add_file(path):
+    def add_file(self, path):
         self.rag.add_file(path)
 
     def build_full_prompt(self) -> str:
@@ -49,14 +49,15 @@ class StatefulLLM:
         self.history.append(("user", prompt))
 
         if self.rag.contains_documents():
-            retrievals = self.rag.retrieve(prompt, iterations=0)
-
-        self.history.append(("context", retrievals))
+            retrievals = self.rag.retrieve(prompt, iterations=2)
+            self.history.append(("context", retrievals))
+            self.history_size += utf8len(retrievals)
 
         self.history_size += utf8len(prompt)
-        self.history_size += utf8len(retrievals)
 
         full_prompt = self.build_full_prompt()
+
+        print(full_prompt)
         
         assistant_reply = ""
 
@@ -87,3 +88,7 @@ class StatefulLLM:
         self.history_size += utf8len(assistant_reply)
 
         self.clean_history()
+
+        
+def utf8len(s):
+    return len(s.encode('utf-8'))

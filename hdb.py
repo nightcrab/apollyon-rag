@@ -1,5 +1,6 @@
 from typing import List, Optional, Dict, Any
-
+from sentence_transformers import SentenceTransformer
+import time
 
 class Chunker:
     """Chunker using RecursiveCharacterTextSplitter"""
@@ -10,7 +11,7 @@ class Chunker:
         chunk_overlap: int = 150,
         separators: Optional[List[str]] = None,
         keep_separator: bool = True,
-        model_path: str = "granite4:1b"
+        model_path: str = "granite3.3:2b"
     ):
         if separators is None:
             separators = ["\n\n", "\n", ". ", "? ", "! ", " ", ""]
@@ -42,10 +43,14 @@ class Chunker:
             self.model_path,
             max_tokens=32
         )
+        prompts = []
+
         for chunk in chunks[::2]:
-            title = llm.answer(f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}")
-            titles.append(title)
-            print(title)
+            prompt = f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}"
+            prompts.append(prompt)
+
+        titles = llm.batch_answer(prompts)
+
         print("Done creating titles.")
         return titles
     
@@ -73,15 +78,15 @@ class HybridDB:
         self.keyword_matrix = None  # Will be initialized on first add
         self.save_path = None
         
-        if path:
-            self.save_path = path + ".db"
-            self._process_document(path)
-
         # Chunker and embedder are initialized lazily when needed
         self.embedder_name = embedder_name
         self._embedder = None
         self._chunker = None
         self._vectorizer = None
+
+        if path:
+            self.save_path = path + ".db"
+            self._process_document(path)
 
     @property
     def chunker(self):
@@ -176,13 +181,17 @@ class HybridDB:
             combined = np.vstack((old_dense, new_tfidf.toarray()))
             self.keyword_matrix = combined  # Keep as dense array for simplicity
 
+        if not self.save_path:
+            self.save_path = f"{path}.db"
+
+        print("Saving DB")
+        self.save(self.save_path)
+
     def add_file(self, path: str):
         """Add a new document file and process it incrementally."""
         try:
+            print(f"Processing document {path}")
             self._process_document(path)
-
-            if self.save_path:
-                self.save(self.save_path)
 
             print(f"Successfully added {path}")
         except Exception as e:
@@ -348,7 +357,6 @@ class HybridDB:
     def load(cls, path: str):
         """Load database from disk"""
         import joblib
-        from sentence_transformers import SentenceTransformer
 
         data = joblib.load(path)
         

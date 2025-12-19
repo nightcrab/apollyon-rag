@@ -1,7 +1,7 @@
 from rag import *
 from llm import StatelessLLM
 
-MODEL_NAME_FINAL = "ministral-3:14b"
+MODEL_NAME_FINAL = MODEL
 
 def test_case():
     rag = RAGInstance(verbose=True)

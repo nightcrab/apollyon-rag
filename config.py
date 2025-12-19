@@ -1,0 +1,1 @@
+MODEL = "ministral-3:14b"

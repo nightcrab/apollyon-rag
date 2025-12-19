@@ -10,6 +10,8 @@ from contextlib import asynccontextmanager
 from files import save_file
 from stateful_llm import StatefulLLM
 
+from config import MODEL
+
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 sessions = dict()
@@ -83,7 +85,7 @@ async def upload_file(
 async def lifespan(app: FastAPI):
 
     sessions["default_session"] = StatefulLLM(
-        "ministral-3:14b"
+        MODEL
     )
 
     yield

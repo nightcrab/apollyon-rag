@@ -7,8 +7,10 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import time
 
+from config import MODEL
+
 OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "ministral-3:14b"
+DEFAULT_MODEL = MODEL
 
 class StatelessLLM:
     """

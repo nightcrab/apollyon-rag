@@ -8,8 +8,10 @@ import random
 from hdb import HybridDB, SearchContext
 from llm import StatelessLLM
 
-MODEL_NAME = "ministral-3:14b"
-MODEL_NAME_FINAL = "ministral-3:14b"
+from config import MODEL
+
+MODEL_NAME = MODEL
+MODEL_NAME_FINAL = MODEL
 
 MAX_PROMPT_SIZE = 100000
 
@@ -149,6 +151,8 @@ class RAGInstance:
 
         if not self.contains_documents():
             return "No documents."
+
+        new_chunks = self.ctx.history = [] # reset 
 
         new_chunks = self.ctx.search(task)
 

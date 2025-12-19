@@ -37,7 +37,8 @@ ALLOWED_EXTENSIONS = {
     ".tex",
     ".bib",
     ".properties",
-    ".env"
+    ".env",
+    ".mjs"
 }
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB

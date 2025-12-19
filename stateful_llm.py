@@ -9,8 +9,10 @@ import hdb
 import rag
 import llm
 
+from config import MODEL
+
 OLLAMA_URL = "http://localhost:11434"
-DEFAULT_MODEL = "ministral-3:14b"
+DEFAULT_MODEL = MODEL
 
 class StatefulLLM:
     def __init__(

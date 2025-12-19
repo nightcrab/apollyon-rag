@@ -8,12 +8,12 @@ Apollyon provides a local web interface for local LLMs allowing you to upload do
 
 ## Features
 
-- **Document Upload & Processing**: Upload text/markdown files (up to 10MB) which are automatically chunked and indexed
-- **Hybrid Search**: Combines vector embeddings with TF-IDF keyword search for better retrieval
-- **Iterative RAG**: Multiple retrieval iterations to gather comprehensive context before answering
-- **Session Management**: Multiple chat sessions with persistent conversation history - supports multiple users at the same time
-- **Modern UI**: SvelteKit-based responsive frontend
-- **FastAPI Backend**: Python backend with async streaming support
+- **Document Upload & Processing** 📄: Upload text/markdown files (up to 10MB) which are automatically chunked and indexed
+- **Hybrid Search** 🔗: Combines vector embeddings with TF-IDF keyword search for better retrieval
+- **Iterative RAG** 🔄: Multiple retrieval iterations to gather comprehensive context before answering
+- **Session Management** 💬: Multiple chat sessions with persistent conversation history - supports multiple users at the same time
+- **Modern UI** 🎨: SvelteKit-based responsive frontend
+- **FastAPI Backend** ⚡: Python backend with async streaming support
 
 ## Architecture
 
@@ -26,13 +26,13 @@ Frontend (SvelteKit) → Backend (FastAPI) → RAG System → Ollama LLM
 
 ## Prerequisites
 
-1. **Ollama**: Install from [ollama.ai](https://ollama.ai/)
+1. **Ollama** 🦙: Install from [ollama.ai](https://ollama.ai/)
    ```bash
    # Install and start Ollama
    ollama serve
    ```
-2. **Python 3.8+** with pip
-3. **Node.js 18+** with npm
+2. **Python 3.8+** 🐍 with pip
+3. **Node.js 18+** 🟢 with npm
 
 ## Installation
 
@@ -74,6 +74,7 @@ npm install
 - **`main.py`**: FastAPI backend configuration
 - **`vite.config.js`**: Frontend proxy configuration
 - **`config.py`**: Model configuration 
+
 ## Usage
 
 ### 1. Start the backend
@@ -92,36 +93,36 @@ Navigate to `http://localhost:5173` in your browser.
 ### 4. Upload documents
 - Click the upload 🔗 button to add `.txt` or `.md` files
 - Files are processed and indexed automatically
-- Uploads may take a while depending on your hardware and file size
+- Uploads may take a while depending on your hardware and file size ⏳
 
 ### 5. Ask questions
 - Type questions in the chat interface
 - The system will retrieve relevant context from uploaded documents
-- Answers are generated using the local Ollama model
+- Answers are generated using the local Ollama model 🤖
 
 ## Project Structure
 
 ```
-├── frontend/               # SvelteKit application
-│   ├── src/                # Chat interface
-│   ├── static/             # Frontend assets
+├── frontend/               # SvelteKit application 
+│   ├── src/                # Chat interface 
+│   ├── static/             # Frontend assets 
 │   └── package.json
-├── backend/                # FastAPI application
+├── backend/                # FastAPI application 
 │   ├── main.py             # Main API server
-│   ├── llm.py              # LLM wrapper classes
-│   ├── rag.py              # RAG pipeline
-│   ├── hdb.py              # Hybrid database
-│   ├── files.py            # File handling
+│   ├── llm.py              # LLM wrapper classes 
+│   ├── rag.py              # RAG pipeline 
+│   ├── hdb.py              # Hybrid database 
+│   ├── files.py            # File handling 
 │   ├── stateful_llm.py     # Stateful LLM sessions
 │   └── requirements.txt
-├── example_data/            # Sample documents
-├── uploads/                 # User uploaded files
+├── example_data/            # Sample documents 
+├── uploads/                 # User uploaded files 
 └── README.md
 ```
 
-## API Endpoints (backend server)
-- `POST /api/chat`: Stream chat completions
-- `POST /api/upload/`: Upload and process documents
+## API Endpoints (backend server) 
+- `POST /api/chat`: Stream chat completions 
+- `POST /api/upload/`: Upload and process documents 
 
 ## Testing
 
@@ -138,7 +139,7 @@ python test_db.py
 python test_rag2.py
 ```
 
-## Troubleshooting
+## Troubleshooting 🔧
 
 1. **Ollama not running**:
    ```
@@ -157,8 +158,8 @@ python test_rag2.py
 
 ## Acknowledgements
 
-- [Ollama](https://ollama.ai/) for local LLM serving
-- [Sentence Transformers](https://www.sbert.net/) for embeddings
+- [Ollama](https://ollama.ai/) for local LLM serving 
+- [Sentence Transformers](https://www.sbert.net/) for embeddings 
 - [LangChain](https://www.langchain.com/) for text splitting utilities
 - [SvelteKit](https://kit.svelte.dev/) for frontend framework
 - [FastAPI](https://fastapi.tiangolo.com/) for backend API

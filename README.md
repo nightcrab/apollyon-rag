@@ -119,25 +119,6 @@ Navigate to `http://localhost:5173` in your browser.
 └── README.md
 ```
 
-## Key Components
-
-### HybridDB (`hdb.py`)
-- Hybrid vector + keyword database
-- Incremental document addition
-- Context-aware search with RRF (Reciprocal Rank Fusion)
-- Automatic chunking and title generation
-
-### RAG Pipeline (`rag.py`)
-- Iterative retrieval with query generation
-- Context window management
-- Prompt engineering for search optimization
-
-### StatefulLLM (`stateful_llm.py`)
-- Conversation history management
-- Context window size limiting
-- Streaming response generation
-- RAG integration
-
 ## API Endpoints (backend server)
 - `POST /api/chat`: Stream chat completions
 - `POST /api/upload/`: Upload and process documents
@@ -157,35 +138,7 @@ python test_db.py
 python test_rag2.py
 ```
 
-## Development
-
-### Adding New Models
-1. Pull the model from Ollama:
-   ```bash
-   ollama pull <model-name>
-   ```
-2. Update `DEFAULT_MODEL` in relevant Python files
-3. Adjust token limits and parameters as needed
-
-### Extending File Support
-1. Update `ALLOWED_EXTENSIONS` in `files.py`
-2. Add appropriate document loader in `hdb.py`
-
-### Customizing Search
-- Adjust `chunk_size` and `overlap` in `HybridDB` initialization
-- Modify `top_k` and similarity thresholds in `SearchContext`
-- Tune RRF parameters in the search methods
-
-## Performance Notes
-
-- **First-time indexing** may take time depending on document size
-- **Hybrid search** provides better recall than vector-only
-- **Memory usage**: History is limited to ~256KB by default
-- **Response time**: Depends on model size and retrieval complexity
-
 ## Troubleshooting
-
-### Common Issues
 
 1. **Ollama not running**:
    ```
@@ -201,11 +154,6 @@ python test_rag2.py
 3. **Slow response time**:
    - Ensure Ollama is warmed up
    - Use smaller model
-
-### Logs
-- Backend logs appear in the terminal running `uvicorn`
-- Frontend logs appear in browser developer tools
-- Ollama logs appear in the terminal running `ollama serve`
 
 ## Acknowledgements
 

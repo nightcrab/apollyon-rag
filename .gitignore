@@ -2,3 +2,4 @@ example_data/corpus.txt.db
 out.txt
 uploads/*
 node_modules/*
+__pycache__

@@ -1,10 +1,10 @@
 # Apollyon RAG
 
-A full-stack web application for document-based question answering using Ollama local LLMs with Retrieval-Augmented Generation (RAG) capabilities.
+A full-stack web application for document-based question answering using local LLMs with Retrieval-Augmented Generation (RAG) capabilities.
 
 ## Overview
 
-Apollyon provides a local web interface for local LLMs allowing you to upload documents, and get AI-powered answers based on the uploaded content using hybrid search (vector + keyword) and iterative RAG.
+Apollyon provides a local web interface for local LLMs allowing you to upload large documents, engage with the LLM in conversation, and get accurate answers based on the uploaded content using hybrid search (vector + keyword) and iterative RAG.
 
 ## Features
 

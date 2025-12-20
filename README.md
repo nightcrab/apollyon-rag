@@ -82,7 +82,10 @@ npm install
 uvicorn main:app --reload --port 8000
 ```
 
-### 2. Start the frontend (in a separate terminal)
+### 2. Start the frontend
+
+In a second terminal:
+
 ```bash
 npm run dev
 ```

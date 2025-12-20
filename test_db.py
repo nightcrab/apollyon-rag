@@ -22,7 +22,7 @@ def format_chunks(chunks):
 
 db = load_or_create_db("./example_data/corpus.txt")
 
-ctx = SearchContext(db, top_k=2)
+ctx = SearchContext(db, top_k=10)
 
 task = "Who is Lilya Polonskaya?"
 

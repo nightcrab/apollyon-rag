@@ -24,6 +24,7 @@ class Chunker:
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             separators=separators,
+            add_start_index=True,
             keep_separator=keep_separator,
             length_function=lambda text: len(text.split())  # Count by words
         )
@@ -294,6 +295,9 @@ class HybridDB:
             excluded_idxs=excluded_idxs
         )
         
+        if not direct_indices:
+            return [], []
+        
         direct_tfidf = self.keyword_matrix[direct_indices]
         
         # TF-IDF vectors
@@ -311,7 +315,7 @@ class HybridDB:
         top_related_count = max(0, top_k - len(direct_indices))
 
         for idx in range(len(similarities)):
-            if idx < similarity_threshold:
+            if similarities[idx] < similarity_threshold:
                 similarities[idx] = -1
             if idx in excluded_idxs:
                 similarities[idx] = -1
@@ -328,34 +332,42 @@ class HybridDB:
         
         return self._merge_chunks(all_indices), all_indices
 
+
     def _merge_chunks(self, indices: List[int]) -> List[str]:
-        """Merge consecutive chunks while removing overlap"""
         if not indices:
             return []
 
         merged = []
-        previous_idx = -2
+        current = None
 
         for idx in sorted(indices):
-            chunk = self.chunks[idx]
-            
-            if previous_idx == -2:
-                merged.append(chunk)
-            elif idx == previous_idx + 1:
-                prev_chunk = merged[-1]
-                overlap_size = 0
-                max_overlap = min(len(prev_chunk), len(chunk))
-                for i in range(1, max_overlap + 1):
-                    if prev_chunk[-i:] == chunk[:i]:
-                        overlap_size = i
-                        break  # Use longest match found
-                merged[-1] += " " + chunk[overlap_size:]
+            doc = self.documents[idx]
+            start = doc.metadata["start_index"]
+            end = start + len(doc.page_content)
+
+            if current is None:
+                current = {
+                    "start": start,
+                    "end": end,
+                    "text": doc.page_content
+                }
+                continue
+
+            if start <= current["end"]:
+                overlap = current["end"] - start
+                current["text"] += doc.page_content[max(0, overlap):]
+                current["end"] = max(current["end"], end)
             else:
-                merged.append(chunk)
+                merged.append(current["text"])
+                current = {
+                    "start": start,
+                    "end": end,
+                    "text": doc.page_content
+                }
 
-            previous_idx = idx
-
+        merged.append(current["text"])
         return merged
+
 
     def save(self, path: str):
         """Save database to disk"""

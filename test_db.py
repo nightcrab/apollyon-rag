@@ -22,8 +22,8 @@ def format_chunks(chunks):
 
 db = load_or_create_db("./example_data/corpus.txt")
 
-ctx = SearchContext(db, top_k=5)
+ctx = SearchContext(db, top_k=2)
 
-task = "Who is Kitayama Tou?"
+task = "Who is Lilya Polonskaya?"
 
 print(format_chunks(ctx.search(task)))

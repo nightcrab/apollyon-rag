@@ -1,6 +1,7 @@
 from typing import List, Optional, Dict, Any
 from sentence_transformers import SentenceTransformer
 import time
+import numpy as np
 
 class Chunker:
     """Chunker using RecursiveCharacterTextSplitter"""
@@ -76,6 +77,7 @@ class HybridDB:
         self.embeddings = []
         self.checksums = []
         self.keyword_matrix = None  # Will be initialized on first add
+
         self.save_path = None
         
         # Chunker and embedder are initialized lazily when needed
@@ -87,6 +89,9 @@ class HybridDB:
         if path:
             self.save_path = path + ".db"
             self._process_document(path)
+
+    def _tokenize(self, text: str):
+        return re.findall(r"[A-Za-z0-9_+-]{3,}", text.lower())
 
     @property
     def chunker(self):
@@ -106,10 +111,13 @@ class HybridDB:
         if self._vectorizer is None:
             from sklearn.feature_extraction.text import TfidfVectorizer
             self._vectorizer = TfidfVectorizer(
-                stop_words="english",
-                max_features=5000,
-                ngram_range=(1, 3),
-                sublinear_tf=True,
+                lowercase=True,
+                stop_words=None,        
+                min_df=1,               
+                max_df=1.0,             
+                max_features=None,      
+                ngram_range=(1, 2),
+                sublinear_tf=True
             )
         return self._vectorizer
 
@@ -119,8 +127,8 @@ class HybridDB:
 
         nltk.download('brown', quiet=True)
         nltk.download('gutenberg', quiet=True)
-        background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:100]
-        background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:100]
+        background_docs = [" ".join(brown.words(fileid)) for fileid in brown.fileids()][:10]
+        background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:10]
         return background_docs
 
     def _process_document(self, path: str):
@@ -128,7 +136,6 @@ class HybridDB:
         import hashlib
         from langchain_community.document_loaders import TextLoader
         from langchain_core.documents import Document
-        import numpy as np
         from sklearn.metrics.pairwise import cosine_similarity
         from scipy.sparse import csr_matrix
 
@@ -201,7 +208,6 @@ class HybridDB:
 
     def _1d_filter(self, scores, side_weight=0.3, center_weight=0.4):
         """Apply 1D context filter to scores"""
-        import numpy as np
         context_scores = scores.copy()
         for i in range(len(scores)):
             acc = center_weight * scores[i]
@@ -220,7 +226,6 @@ class HybridDB:
         excluded_idxs: list = None
     ):
         """Search using RRF hybrid approach"""
-        import numpy as np
         from sklearn.metrics.pairwise import cosine_similarity
 
         if excluded_idxs is None:
@@ -228,6 +233,10 @@ class HybridDB:
         
         # Get keyword scores and ranks
         q_kw = self.vectorizer.transform([query])
+        
+        if q_kw.nnz == 0:
+            print("⚠️ Query has no in-vocab keywords")
+
         kw_scores = cosine_similarity(q_kw, self.keyword_matrix)[0]
         kw_ranks = (-kw_scores).argsort().argsort() + 1
         
@@ -264,7 +273,6 @@ class HybridDB:
     def contextual_search(
         self,
         query: str,
-        top_k_direct: int = 1,
         top_k: int = 2,
         similarity_threshold: float = 0.1,
         excluded_idxs: list = None
@@ -276,6 +284,9 @@ class HybridDB:
             excluded_idxs = []
         
         # 2-step search using tf-idf
+        
+        top_k_direct = max(1, top_k // 2)
+        print(top_k_direct)
 
         direct_matches, direct_indices = self.search(
             query, 
@@ -288,7 +299,8 @@ class HybridDB:
         # TF-IDF vectors
         combined_vector = direct_tfidf.mean(axis=0)
         combined_vector = csr_matrix(combined_vector)
-        
+        feature_names = self.vectorizer.get_feature_names_out()
+
         similarities = cosine_similarity(combined_vector, self.keyword_matrix)[0]
         
         # smoothing filter
@@ -391,7 +403,7 @@ class SearchContext:
     def __init__(
         self,
         database: HybridDB,
-        top_k: int = 2,
+        top_k: int = 3,
     ):
         self.database = database
         self.history = []

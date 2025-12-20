@@ -152,18 +152,19 @@ class RAGInstance:
         if not self.contains_documents():
             return "No documents."
 
-        new_chunks = self.ctx.history = [] # reset 
+        self.ctx.history = []
 
-        new_chunks = self.ctx.search(task)
+        _, idxs = self.ctx.search(task)
 
-        self.chunks.extend(new_chunks)
         self.queries.append(task)
 
         for x in range(iterations):
 
+            idxs = sorted(idxs)
+
             prompt = generate_prompt(
                 task,
-                chunks=self.chunks,
+                chunks=self.db._merge_chunks(idxs),
                 queries=self.queries,
                 titles=random.sample( # randomise each time
                     self.db.titles, 
@@ -178,14 +179,14 @@ class RAGInstance:
 
             self.queries.append(query)
 
-            retrievals = self.ctx.search(query)
-            new_chunks.extend(retrievals)
-            
-            self.chunks.extend(retrievals)
+            _, new_idxs = self.ctx.search(query)
+
+            idxs.extend(new_idxs)
 
         if self.verbose:
-            print(f"{len(new_chunks)} chunks retrieved")
+            print(f"{len(idxs)} chunks retrieved")
 
         print(self.ctx.history)
+        print(idxs)
 
-        return format_chunks(new_chunks)
+        return format_chunks(self.db._merge_chunks(idxs))

@@ -29,4 +29,4 @@ ctx = SearchContext(db, top_k=2)
 
 task = "Who is Kitayama Tou?"
 
-print(format_chunks(ctx.search(task)))
+print(format_chunks(ctx.search(task)[0]))

@@ -1,1 +1,1 @@
-MODEL = "ministral-3:14b"
+MODEL = "qwen3:32b"

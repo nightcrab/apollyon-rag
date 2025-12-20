@@ -2,16 +2,21 @@ from typing import List, Optional, Dict, Any
 from sentence_transformers import SentenceTransformer
 import time
 import numpy as np
+import torch
+from langchain_community.document_loaders import TextLoader
+
+import nltk
+nltk.download("punkt")
 
 class Chunker:
     """Chunker using RecursiveCharacterTextSplitter"""
     
     def __init__(
         self,
-        chunk_size: int = 300,
-        chunk_overlap: int = 150,
+        chunk_size: int = 3000,
+        chunk_overlap: int = 500,
         separators: Optional[List[str]] = None,
-        keep_separator: bool = True,
+        keep_separator: bool = False,
         model_path: str = "granite3.3:2b"
     ):
         if separators is None:
@@ -25,8 +30,7 @@ class Chunker:
             chunk_overlap=chunk_overlap,
             separators=separators,
             add_start_index=True,
-            keep_separator=keep_separator,
-            length_function=lambda text: len(text.split())  # Count by words
+            keep_separator=False,
         )
 
         self.model_path = model_path
@@ -132,6 +136,39 @@ class HybridDB:
         background_docs += [gutenberg.raw(f) for f in gutenberg.fileids()][:10]
         return background_docs
 
+    
+    def _load_documents(self, path: str):
+        from pathlib import Path
+        suffix = Path(path).suffix.lower()
+
+        if suffix == ".txt":
+            from langchain_community.document_loaders import TextLoader
+            return TextLoader(path, encoding="utf-8").load()
+
+        elif suffix == ".pdf":
+            from langchain_community.document_loaders import PyPDFLoader
+            return PyPDFLoader(path).load()
+
+        elif suffix == ".epub":
+            from langchain_community.document_loaders import UnstructuredEPubLoader
+            return UnstructuredEPubLoader(path).load()
+
+        elif suffix in {".md", ".markdown"}:
+            from langchain_community.document_loaders import UnstructuredMarkdownLoader
+            return UnstructuredMarkdownLoader(path).load()
+
+        elif suffix in {".html", ".htm"}:
+            from langchain_community.document_loaders import UnstructuredHTMLLoader
+            return UnstructuredHTMLLoader(path).load()
+
+        elif suffix in {".docx", ".doc"}:
+            from langchain_community.document_loaders import UnstructuredWordDocumentLoader
+            return UnstructuredWordDocumentLoader(path).load()
+
+        else:
+            raise ValueError(f"Unsupported file type: {suffix}")
+
+
     def _process_document(self, path: str):
         import pathlib
         import hashlib
@@ -146,8 +183,7 @@ class HybridDB:
         pathlib.Path(path).resolve()  # Validate path exists indirectly
 
         # Load text
-        loader = TextLoader(path, encoding="utf-8")
-        documents = loader.load()
+        documents = self._load_documents(path)
 
         # Compute checksum
         text = documents[0].page_content
@@ -188,7 +224,7 @@ class HybridDB:
             combined = np.vstack((old_dense, new_tfidf.toarray()))
             self.keyword_matrix = combined
 
-        if not self.save_path:
+        if not hasattr(self, "save_path") or not self.save_path:
             self.save_path = f"{path}.db"
 
         print("Saving DB")
@@ -287,14 +323,13 @@ class HybridDB:
         # 2-step search using tf-idf
         
         top_k_direct = max(1, top_k // 2)
-        print(top_k_direct)
 
         direct_matches, direct_indices = self.search(
             query, 
             top_k=top_k_direct,
             excluded_idxs=excluded_idxs
         )
-        
+
         if not direct_indices:
             return [], []
         
@@ -338,34 +373,33 @@ class HybridDB:
             return []
 
         merged = []
-        current = None
+        previous = None
 
         for idx in sorted(indices):
             doc = self.documents[idx]
             start = doc.metadata["start_index"]
             end = start + len(doc.page_content)
-
-            if current is None:
-                current = {
+            if previous is None:
+                previous = {
                     "start": start,
                     "end": end,
                     "text": doc.page_content
                 }
                 continue
 
-            if start <= current["end"]:
-                overlap = current["end"] - start
-                current["text"] += doc.page_content[max(0, overlap):]
-                current["end"] = max(current["end"], end)
+            if start <= previous["end"]:
+                overlap = previous["end"] - start
+                previous["text"] += doc.page_content[max(0, overlap):]
+                previous["end"] = max(previous["end"], end)
             else:
-                merged.append(current["text"])
-                current = {
+                merged.append(previous["text"])
+                previous = {
                     "start": start,
                     "end": end,
                     "text": doc.page_content
                 }
 
-        merged.append(current["text"])
+        merged.append(previous["text"])
         return merged
 
 
@@ -421,7 +455,7 @@ class SearchContext:
         self.history = []
         self.top_k = top_k
     
-    def search(self, query: str) -> List[str]:
+    def search(self, query: str):
         """Search with memory state"""
         chunks, idxs = self.database.contextual_search(
             query,
@@ -430,8 +464,7 @@ class SearchContext:
         )
 
         self.history.extend(idxs)
-        print(self.history)
-        return chunks
+        return chunks, idxs
     
     def reset(self):
         """Reset search history"""

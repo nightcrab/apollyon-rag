@@ -18,7 +18,7 @@ def test_case():
     chunks = []
     queries = []
 
-    chunks = ctx.search(task)
+    chunks, _ = ctx.search(task)
     queries.append(task)
 
     prompt = generate_prompt(

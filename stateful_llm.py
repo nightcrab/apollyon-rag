@@ -52,7 +52,6 @@ class StatefulLLM:
             self.history = self.history[1:]
 
     async def stream_completion(self, prompt: str):
-
         if self.rag.contains_documents():
             retrievals = self.rag.retrieve(prompt, iterations=3)
             self.history.append(("documents retrieved", retrievals))
@@ -62,8 +61,7 @@ class StatefulLLM:
         self.history_size += utf8len(prompt)
 
         full_prompt = self.build_full_prompt()
-
-        print(full_prompt)
+        print("PROMPT START", full_prompt, "PROMPT END")
         
         assistant_reply = ""
 
@@ -91,6 +89,7 @@ class StatefulLLM:
                         yield token
 
         self.history.append(("assistant", assistant_reply))
+        print(assistant_reply)
         self.history_size += utf8len(assistant_reply)
 
         self.clean_history()

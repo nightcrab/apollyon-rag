@@ -23,12 +23,14 @@
 	];
 
 	onMount(()=>{
+		session_id = uuid();
+		localStorage.setItem("session_id", session_id);
 		session_id = localStorage.getItem("session_id");
 
-		if (!session_id) {
-			session_id = uuid();
-			localStorage.setItem("session_id", session_id);
-		}
+		//if (!session_id) {
+		//	session_id = uuid();
+		//	localStorage.setItem("session_id", session_id);
+		//}
 	})
 
 	function renderMarkdown(content) {
@@ -156,7 +158,7 @@
 		type="file"
 		bind:this={fileInput}
 		on:change={handleFileChange}
-		accept="text/*"
+		accept="*"
 		style="display: none;"
 	/>
 

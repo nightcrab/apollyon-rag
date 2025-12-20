@@ -6,6 +6,7 @@ UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {
+    # Plain text & markup
     ".txt",
     ".md",
     ".rst",
@@ -21,8 +22,23 @@ ALLOWED_EXTENSIONS = {
     ".xml",
     ".html",
     ".htm",
+    ".tex",
+    ".bib",
+
+    # Documents
+    ".pdf",
+    ".epub",
+    ".doc",
+    ".docx",
+    ".odt",
+    ".rtf",
+    ".pptx",
+    ".xlsx",
+
+    # Code & scripts
     ".css",
     ".js",
+    ".mjs",
     ".ts",
     ".py",
     ".java",
@@ -34,14 +50,13 @@ ALLOWED_EXTENSIONS = {
     ".bat",
     ".ps1",
     ".sql",
-    ".tex",
-    ".bib",
+
+    # Misc
     ".properties",
-    ".env",
-    ".mjs"
+    ".env"
 }
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 1000 * 1024 * 1024  # 1000MB
 
 def sanitize_filename(filename: str) -> str:
     # Extract the base name only (removes path traversal)

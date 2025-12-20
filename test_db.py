@@ -26,4 +26,4 @@ ctx = SearchContext(db, top_k=10)
 
 task = "Who is Lilya Polonskaya?"
 
-print(format_chunks(ctx.search(task)))
+print(format_chunks(ctx.search(task)[0]))

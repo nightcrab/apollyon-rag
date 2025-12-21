@@ -65,6 +65,15 @@ class StatefulLLM:
         
         assistant_reply = ""
 
+        thoughts = llm.StatelessLLM(
+            self.model,
+            think_tokens=64
+        ).think(
+            full_prompt
+        )
+
+        full_prompt += f"\nThinking{thoughts}\nResponse:"
+
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream(
                 "POST",
@@ -75,6 +84,7 @@ class StatefulLLM:
                     "temperature": self.temperature,
                     "num_predict": self.max_tokens,
                     "stream": True,
+                    "think": False
                 },
             ) as response:
 

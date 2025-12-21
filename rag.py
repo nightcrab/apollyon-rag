@@ -172,7 +172,7 @@ class RAGInstance:
                 ) 
             )
 
-            query = self.llm.answer(prompt)
+            query = self.llm.answer(prompt, think=True)
 
             if self.verbose:
                 print(f'query: {query}')
@@ -183,6 +183,8 @@ class RAGInstance:
 
             idxs.extend(new_idxs)
 
+        idxs = sorted(idxs)
+        
         if self.verbose:
             print(f"{len(idxs)} chunks retrieved")
 

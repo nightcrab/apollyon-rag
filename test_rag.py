@@ -33,7 +33,7 @@ def test_case():
         print(query)   
         queries.append(query)
         
-        chunks = combine_chunks(chunks, ctx.search(query))
+        chunks = combine_chunks(chunks, ctx.search(query)[0])
         
         prompt = generate_prompt(
             task,

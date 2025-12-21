@@ -22,25 +22,26 @@ class StatelessLLM:
         model: str,
         temperature: float = 0.2,
         max_tokens: int = 32,
+        think_tokens: int = 256,
     ):
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.think_tokens = think_tokens
 
         install_model(self.model)
 
-
-    def answer(
-        self, 
-        prompt: str,
-        verbose: bool = False
-    ) -> str:
+    def think(
+        self,
+        prompt
+    ):
         payload = {
             "model": self.model,
             "prompt": prompt,
+            "think": True,
             "options": {
                 "temperature": self.temperature,
-                "num_predict": self.max_tokens,
+                "num_predict": self.think_tokens,
             },
             "stream": False,
         }
@@ -50,10 +51,48 @@ class StatelessLLM:
             json=payload,
             timeout=60,
         )
+
         resp.raise_for_status()
         data = resp.json()
 
-        ret = data.get("response", "").strip()
+        return data.get("thinking", "").strip()
+
+    def answer(
+        self, 
+        prompt: str,
+        verbose: bool = False,
+        think: bool = False
+    ) -> str:
+
+        def generate(prompt, thinking, tokens):
+            payload = {
+                "model": self.model,
+                "prompt": prompt,
+                "think": thinking,
+                "options": {
+                    "temperature": self.temperature,
+                    "num_predict": tokens,
+                },
+                "stream": False,
+            }
+
+            resp = requests.post(
+                f"{OLLAMA_URL}/api/generate",
+                json=payload,
+                timeout=60,
+            )
+
+            resp.raise_for_status()
+            data = resp.json()
+
+            return data.get("thinking", "").strip(), data.get("response", "").strip()
+
+        if think:
+            thoughts = generate(prompt, True, self.think_tokens)[0]
+
+            ret = generate(f"{prompt}\nThinking:{thoughts}\nResponse:", False, self.max_tokens)[1]
+        else:
+            ret = generate(prompt, False, self.max_tokens)[1]
 
         if verbose:
             print(ret)

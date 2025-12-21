@@ -51,7 +51,7 @@ class Chunker:
         )
         prompts = []
 
-        for chunk in chunks[::2]:
+        for chunk in chunks[::1]:
             prompt = f"Provide a short title in less than 16 tokens describing the contents of this document chunk. Do not write anything else.\n{chunk}"
             prompts.append(prompt)
 
@@ -200,7 +200,11 @@ class HybridDB:
         new_titles = self.chunker.create_titles(new_chunks)
         self.titles.extend(new_titles)
 
-        # Embeddings: Encode only new chunks and append
+        # Combine titles and chunks for indexing
+        for idx in range(len(new_chunks)):
+            new_chunks[idx] = f"{new_titles[idx]}\n{new_chunks[idx]}"
+
+        # Embeddings
         new_embeddings = self.embedder.encode(
             new_chunks,
             normalize_embeddings=True,
@@ -211,7 +215,7 @@ class HybridDB:
         else:
             self.embeddings = new_embeddings
 
-        # TF-IDF: fit on background + new chunks, or transform new only
+        # TF-IDF
         background_docs = self._load_background_corpus()
         all_for_tfidf = new_chunks + background_docs
 
@@ -449,7 +453,7 @@ class SearchContext:
     def __init__(
         self,
         database: HybridDB,
-        top_k: int = 3,
+        top_k: int = 2,
     ):
         self.database = database
         self.history = []

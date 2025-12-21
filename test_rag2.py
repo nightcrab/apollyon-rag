@@ -9,7 +9,7 @@ def test_case():
     rag.add_file("./example_data/corpus.txt")
 
     task = "Who is Kitayama Tou?"
-    formatted_chunks = rag.retrieve(task, iterations=5)
+    formatted_chunks = rag.retrieve(task, iterations=3)
 
     prompt = f"CONTEXT:\n{formatted_chunks}\nPROMPT:\n{task}"
 
